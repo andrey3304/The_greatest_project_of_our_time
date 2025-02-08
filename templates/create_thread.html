@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Создать новую тему</h2>
+    <form method="post">
+        <label for="title">Заголовок:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+        
+        <label for="content">Содержание:</label><br>
+        <textarea id="content" name="content" required></textarea><br><br>
+        
+        <input type="submit" value="Создать тему">
+    </form>
+    <a href="{{ url_for('index') }}">Назад</a>
+{% endblock %}

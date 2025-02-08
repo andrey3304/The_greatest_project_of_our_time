@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Темы:</h2>
+    <ul>
+        {% for thread in threads %}
+            <li><a href="{{ url_for('thread', thread_id=loop.index0) }}">{{ thread.title }}</a></li>
+        {% else %}
+            <li>Нет тем для отображения.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
