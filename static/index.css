@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
 }
 
-/* Шапка */
+
 .header {
     background-color: #333;
     color: #fff;
@@ -23,7 +23,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-sizing: border-box; /* Важно для учета padding */
+    box-sizing: border-box;
 }
 
 .header h1 {
@@ -44,17 +44,17 @@ body {
 .header-menu a {
     color: white;
     text-decoration: none;
-    background-color: #007bff; /* Синий цвет для фона кнопки */
-    padding: 8px 12px; /* Отступы внутри кнопки */
-    border-radius: 5px; /* Закругленные углы */
-    display: inline-block; /* Превращаем ссылку в блочный элемент для задания отступов */
+    background-color: #007bff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    display: inline-block;
 }
 
 .header-menu a:hover {
-    background-color: #0056b3; /* Более темный синий при наведении */
+    background-color: #0056b3;
 }
 
-/* Левая панель с темами */
+
 .sidebar {
     width: 200px;
     background-color: #ddd;
@@ -64,16 +64,16 @@ body {
     left: 0;
     height: calc(100vh - 60px);
     overflow-y: auto;
-    display: flex;          /* Используем flexbox для размещения кнопки внизу */
-    flex-direction: column;   /* Размещаем элементы вертикально */
-    box-sizing: border-box;  /* Важно для учета padding и ширины */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 .sidebar ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    flex: 1; /* Список занимает все доступное пространство сверху */
+    flex: 1;
 }
 
 .sidebar li {
@@ -89,29 +89,29 @@ body {
     border-radius: 5px;
 }
 
-/* Синий цвет при наведении на тему */
+
 .sidebar a:hover {
-    background-color: #007bff; /* Синий цвет при наведении */
-    color: white; /* Белый текст при наведении (для контраста) */
+    background-color: #007bff;
+    color: white;
 }
 
-/* Кнопка "Добавить тему" - СИНИЙ СТИЛЬ */
+
 .add-topic-button {
     display: block;
     padding: 10px 15px;
-    background-color: #007bff;  /*  Синий цвет (Bootstrap primary)  */
+    background-color: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 5px;
     text-align: center;
-    box-sizing: border-box; /* Важно для учета padding и ширины */
+    box-sizing: border-box;
 }
 
 .add-topic-button:hover {
-    background-color: #0056b3; /*  Более темный синий при наведении  */
+    background-color: #0056b3;
 }
 
-/* Основной контент */
+
 .content {
     flex: 1;
     padding: 20px;
@@ -131,7 +131,7 @@ body {
     margin-top: 0;
 }
 
-/* Адаптивность (простой пример) */
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
