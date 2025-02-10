@@ -19,11 +19,9 @@
     <div class="sidebar">
         <h2>Темы</h2>
         <ul>
-            <li><a href="#">Общие вопросы</a></li>
-            <li><a href="#">Программирование</a></li>
-            <li><a href="#">Дизайн</a></li>
-            <li><a href="#">Маркетинг</a></li>
-            <li><a href="#">Разное</a></li>
+            {% for i in topics %}
+            <li><a href="#">{{ i }}</a></li>
+            {% endfor %}
         </ul>
         <a href="/create_thread" class="add-topic-button">Добавить тему</a>
     </div>

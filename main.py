@@ -3,11 +3,11 @@ from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 
 # Временное хранилище для тем форума
-threads = []
+threads = ['Общее', 'Другое']
 
 @app.route('/')
 def index():
-    return render_template('index.html', threads=threads)
+    return render_template('index.html', topics=threads)
 
 @app.route('/thread/<int:thread_id>')
 def thread(thread_id):
