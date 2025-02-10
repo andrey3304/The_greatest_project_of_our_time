@@ -27,12 +27,23 @@
     </div>
 
     <div class="content">
-        {% for i in messages %}
-        <div class="topic">
-            <h4>{{ i.id }}</h4>
-            <p>{{ i.text }}</p>
+        <div class="current-topic">
+            <h4>Текущая тема: Название темы</h4>
         </div>
-        {% endfor %}
+        <div class="messages-container">
+            {% for i in messages %}
+            <div class="message-box">
+                <h4>{{ i.id }}</h4>
+                <p>{{ i.text }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="message-input-container">
+            <input type="text" class="message-input" placeholder="Введите ваше сообщение...">
+            <button class="send-button">Отправить</button>
+        </div>
+
     </div>
 </div>
 
