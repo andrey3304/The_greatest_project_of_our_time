@@ -9,12 +9,14 @@ threads = []
 def index():
     return render_template('index.html', threads=threads)
 
+
 @app.route('/thread/<int:thread_id>')
 def thread(thread_id):
     if thread_id < len(threads):
         thread_data = threads[thread_id]
         return render_template('thread.html', thread=thread_data)
     return "Тема не найдена", 404
+
 
 @app.route('/create_thread', methods=['GET', 'POST'])
 def create_thread():
@@ -24,6 +26,7 @@ def create_thread():
         threads.append({'title': title, 'content': content})
         return redirect(url_for('index'))
     return render_template('create_thread.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

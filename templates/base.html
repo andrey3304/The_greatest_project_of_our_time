@@ -8,13 +8,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Добро пожаловать на форум!</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('create_thread') }}">Создать тему</a>
-        </nav>
-        <hr>
-        {% block content %}{% endblock %}
+        <header>
+            <h1>Добро пожаловать на форум!</h1>
+            <nav>
+                <a href="{{ url_for('index') }}">Главная</a>
+                <a href="{{ url_for('create_thread') }}">Создать тему</a>
+            </nav>
+            <hr>
+            {% block content %}{% endblock %}
+        </header>
     </div>
 </body>
 </html>
