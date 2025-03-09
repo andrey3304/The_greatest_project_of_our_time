@@ -34,7 +34,7 @@
       https://rickandmortyapi.com.
       >- В процессе работы сайта будут сохраняться в виде файлов: видео, картинки, звук. 
       В базе данных будут хранится все сообщения и ссылки пользователей.
-4. >- ![](../images/site%20scheme.png)
+4. >- ![](../images/site scheme.png)
 5. ff
 6. Graphical interface.
       >- ![](../images/Login_window.jpg)
