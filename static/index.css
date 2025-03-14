@@ -149,3 +149,12 @@ body {
         margin-top: 20px;
     }
 }
+
+.start-mes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 250px;
+    font-family: "Helvetica Neue",Helvetica,Arial;
+    color: #333;
+    }

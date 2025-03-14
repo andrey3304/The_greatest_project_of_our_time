@@ -1,29 +1,21 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# Временное хранилище для тем форума
-threads = []
 
 @app.route('/')
 def index():
-    return render_template('index.html', threads=threads)
+    data = {
+        'main_title': 'WTForum. Главная страница',
+        'label_account_or_login': 'Войти'  # в зависимости от того, авторизован ли пользователь
+           }
+    return render_template('index.html', **data)
 
-@app.route('/thread/<int:thread_id>')
-def thread(thread_id):
-    if thread_id < len(threads):
-        thread_data = threads[thread_id]
-        return render_template('thread.html', thread=thread_data)
-    return "Тема не найдена", 404
 
-@app.route('/create_thread', methods=['GET', 'POST'])
-def create_thread():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-        threads.append({'title': title, 'content': content})
-        return redirect(url_for('index'))
-    return render_template('create_thread.html')
+@app.route('/topics/<slug:topic_name>')
+def show_topic():
+    pass
+
 
 if __name__ == '__main__':
     app.run(debug=True)

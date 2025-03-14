@@ -1,20 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Форум</title>
+    <title>{{ main_title }}</title>
+    <link rel="stylesheet" href="../static/index.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Добро пожаловать на форум!</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('create_thread') }}">Создать тему</a>
-        </nav>
-        <hr>
-        {% block content %}{% endblock %}
+
+<div class="header">
+    <h1><a href="/" style="text-decoration: none; color: inherit;">WTForum</a></h1>
+    <ul class="header-menu">
+        <li><a href="#">О форуме</a></li>
+        <li><a href="{{ url_account_or_login }}">{{ label_account_or_login }}</a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <h2>Темы</h2>
+        <ul>
+            <li><a href="#">Общие вопросы</a></li>
+            <li><a href="#">Программирование</a></li>
+            <li><a href="#">Дизайн</a></li>
+            <li><a href="#">Маркетинг</a></li>
+            <li><a href="#">Разное</a></li>
+        </ul>
+        <a href="#" class="add-topic-button">Добавить тему</a>
     </div>
+
+    {% block content %}
+    {% endblock %}
+</div>
+
 </body>
 </html>
