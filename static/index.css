@@ -1,0 +1,160 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+.header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.header-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.header-menu li {
+    margin-left: 20px;
+}
+
+.header-menu a {
+    color: white;
+    text-decoration: none;
+    background-color: #007bff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.header-menu a:hover {
+    background-color: #0056b3;
+}
+
+
+.sidebar {
+    width: 200px;
+    background-color: #ddd;
+    padding: 20px;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 8px;
+    background-color: #eee;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+
+.sidebar a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+.add-topic-button {
+    display: block;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.add-topic-button:hover {
+    background-color: #0056b3;
+}
+
+
+.content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 240px;
+    margin-top: 80px;
+}
+
+.topic {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.topic h2 {
+    margin-top: 0;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
+
+.start-mes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 250px;
+    font-family: "Helvetica Neue",Helvetica,Arial;
+    color: #333;
+    }
