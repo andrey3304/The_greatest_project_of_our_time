@@ -1,51 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Форум</title>
-    <link rel="stylesheet" href="../static/index.css">
-</head>
-<body>
-
-<div class="header">
-    <h1>Форум</h1>
-    <ul class="header-menu">
-        <li><a href="#">О форуме</a></li>
-        <li><a href="#">Войти</a></li>
-    </ul>
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+        <div class="start-mes">
+            <h2>ВЫБЕРИ ТЕМУ И ЗДЕСЬ ПОЯВЯТСЯ СООБЩЕНИЯ!</h2>
+        </div>
 </div>
-
-<div class="container">
-    <div class="sidebar">
-        <h2>Темы</h2>
-        <ul>
-            {% for i in topics %}
-            <li><a href="#">{{ i }}</a></li>
-            {% endfor %}
-        </ul>
-        <a href="/create_thread" class="add-topic-button">Добавить тему</a>
-    </div>
-
-    <div class="content">
-        <div class="current-topic">
-            <h4>Текущая тема: Название темы</h4>
-        </div>
-        <div class="messages-container">
-            {% for i in messages %}
-            <div class="message-box">
-                <h4>{{ i.id }}</h4>
-                <p>{{ i.text }}</p>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="message-input-container">
-            <input type="text" class="message-input" placeholder="Введите ваше сообщение...">
-            <button class="send-button">Отправить</button>
-        </div>
-
-    </div>
-</div>
-
-</body>
-</html>
+{% endblock %}
