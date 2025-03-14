@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from database.db_session import SqlAlchemyBase
+from The_greatest_project_of_our_time.database.db_session import SqlAlchemyBase
 
 
 class Topic(SqlAlchemyBase):
