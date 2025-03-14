@@ -12,7 +12,7 @@ def index():
     return render_template('index.html', **data)
 
 
-@app.route('/topics/<slug:topic_name>')
+@app.route('/topics/<topic_name>')
 def show_topic():
     pass
 
