@@ -1,23 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Форум</title>
-</head>
-<body>
-    {% extends 'base.html' %}
-
-    {% block content %}
-        <h2>Темы:</h2>
-        <ul>
-            {% for thread in threads %}
-                <li><a href="{{ url_for('thread', thread_id=loop.index0) }}">{{ thread.title }}</a></li>
-            {% else %}
-                <li>Нет тем для отображения.</li>
-            {% endfor %}
-        </ul>
-    {% endblock %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+        <div class="start-mes">
+            <h2>ВЫБЕРИ ТЕМУ И ЗДЕСЬ ПОЯВЯТСЯ СООБЩЕНИЯ!</h2>
+        </div>
+</div>
+{% endblock %}
