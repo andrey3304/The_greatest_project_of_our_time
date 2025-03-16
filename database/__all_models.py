@@ -1,1 +1,1 @@
-# мпорт моделей
+from data.classes import Topic, Message
