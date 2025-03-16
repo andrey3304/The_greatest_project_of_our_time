@@ -1,0 +1,58 @@
+body {
+  background-color: black;
+}
+
+.center, .SentData {
+  position: relative;
+  top: 13vh;
+  text-align: center;
+}
+
+.Inputs {
+  position: relative;
+  top: 17vh;
+}
+
+.Signin_Welcome {
+  color: purple;
+  font-size: 50px;
+  font-family: cursive;
+}
+
+.Login_InputLogin {
+  margin: 50px;
+}
+
+#InputLogin, #InputPassword {
+  font-size: 25px;
+  color: aliceblue;
+  background-color:rgb(0, 0, 0);
+  outline: none;
+  border: 2px solid black;
+}
+
+#InputLogin:focus, #InputPassword:focus {
+  border: 2px solid purple;
+}
+
+#LabelInputLogin, #LabelInputPassword {
+  color: purple;
+  font-family: cursive;
+  font-size: 25px;
+  margin: 10px;
+}
+
+.Login_InputPassword {
+  margin: 50px;
+}
+
+.SentData {
+  top: 37vh;
+}
+
+.ButtonSentData {
+  background-color: black;
+  color: purple;
+  font-size: 30px;
+  border: 2px;
+}
