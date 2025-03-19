@@ -11,7 +11,8 @@ class Topic(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
     messages = orm.relationship("Message", back_populates="topic")
-    description = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    description = sqlalchemy.Column(sqlalchemy.String)
+    slug = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
 
     def __repr__(self):
         return f"Topic(id={self.id}, title='{self.title}')"

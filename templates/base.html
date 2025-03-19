@@ -19,11 +19,9 @@
     <div class="sidebar">
         <h2>Темы</h2>
         <ul>
-            <li><a href="#">Общие вопросы</a></li>
-            <li><a href="#">Программирование</a></li>
-            <li><a href="#">Дизайн</a></li>
-            <li><a href="#">Маркетинг</a></li>
-            <li><a href="#">Разное</a></li>
+            {% for item in topics_list %}
+            <li><a href="{{ url_for('show_topic', topic_slug=item.slug) }}">{{ item.title }}</a></li>
+            {% endfor %}
         </ul>
         <a href="/add_topic" class="add-topic-button">Добавить тему</a>
     </div>
