@@ -6,11 +6,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database.db_session import SqlAlchemyBase
 
 
-class User(Base):
+class User(SqlAlchemyBase):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    username = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
+    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
 
 class Topic(SqlAlchemyBase):
@@ -38,11 +38,3 @@ class Message(SqlAlchemyBase):
         return f"Message(id={self.id}, content='{self.content[:10]}...')"
 
 
-def register_user(username, password):
-    existing_user = session.query(User).filter_by(username=username).first()
-    if existing_user:
-        pass
-    else:
-        new_user = User(username=username, password=password)
-        session.add(new_user)
-        session.commit()
