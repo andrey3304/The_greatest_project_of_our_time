@@ -37,4 +37,3 @@ class Message(SqlAlchemyBase):
     def __repr__(self):
         return f"Message(id={self.id}, content='{self.content[:10]}...')"
 
-
