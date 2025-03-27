@@ -1,3 +1,4 @@
+from flask_socketio import SocketIO, emit, join_room
 from flask import Flask, render_template, redirect
 from data.classes import Topic, Message
 from data.forms import AddTopicForm
@@ -6,6 +7,9 @@ from data.functions import slugify
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+
 
 
 @app.route('/')
@@ -49,8 +53,8 @@ def show_topic(topic_slug):
         'label_account_or_login': 'Войти',
         'topics_list': topics,
         'messages': messages,
+        'topic_slug': topic_slug,
     }
-    print(messages)
     return render_template('show_topic.html', **data)
 
 
@@ -75,6 +79,33 @@ def add_topic():
     if form.validate_on_submit():
         return redirect('/')
     return render_template('add_topic.html', title='WTForum. Добавление темы.', form=form, **data)
+
+
+@socketio.on('new_message')
+def handle_new_message(data):
+    print(data)
+    topic_slug = data['topic_slug']
+    message_text = data['message']
+
+    db_sess = db_session.create_session()
+    topic = db_sess.query(Topic).filter(Topic.slug == str(topic_slug)).first()
+
+    if topic:
+        message = Message()
+        message.content = message_text
+        message.topic_id = topic.id
+        db_sess.add(message)
+        db_sess.commit()
+
+        emit('update_chat', {'topic_slug': topic_slug, 'message': message_text}, room=str(topic_slug))
+    db_sess.close()
+
+
+@socketio.on('join')
+def on_join(data):
+    topic_slug = data['topic_slug']
+    join_room(topic_slug)
+    print(f"Client joined room: {topic_slug}")
 
 
 def main():
