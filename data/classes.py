@@ -6,6 +6,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database.db_session import SqlAlchemyBase
 
 
+class User(SqlAlchemyBase):
+    __tablename__ = 'users'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    username = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
+    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+
+
 class Topic(SqlAlchemyBase):
     __tablename__ = 'topics'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
