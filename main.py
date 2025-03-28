@@ -71,9 +71,13 @@ def add_topic():
         - render_template: Отображенный шаблон 'add_topic.html' с предоставленными данными. Если форма отправлена и проверена,
                           возвращается перенаправление на главную страницу ('/').
     """
+    db_sess = db_session.create_session()
+    topics = db_sess.query(Topic).all()
+    db_sess.close()
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти'  # в зависимости от того, авторизован ли пользователь
+        'label_account_or_login': 'Войти',
+        'topics_list': topics,
     }
     form = AddTopicForm()
     if form.validate_on_submit():
@@ -109,7 +113,7 @@ def on_join(data):
 
 
 def main():
-    db_session.global_init("The_greatest_project_of_our_time/database/forum_db.sqlite")
+    db_session.global_init("database/forum_db.sqlite")
     app.run(debug=True)
 
 
