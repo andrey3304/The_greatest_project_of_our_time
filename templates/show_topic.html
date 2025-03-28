@@ -65,5 +65,13 @@
             document.getElementById('send_button').click();
         }
     });
+    document.addEventListener('DOMContentLoaded', function() {
+       const chatContainer = document.getElementById('chat');
+
+       chatContainer.scrollTo({
+           top: chatContainer.scrollHeight,
+           behavior: 'smooth'
+    });
+});
 </script>
 {% endblock %}
