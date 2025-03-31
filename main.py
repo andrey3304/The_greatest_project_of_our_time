@@ -1,6 +1,6 @@
 from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect
-from data.classes import Topic, Message
+from flask import Flask, render_template, redirect, flash, url_for
+from data.classes import Topic, Message, LoginForm
 from data.forms import AddTopicForm
 from database import db_session
 from data.functions import slugify
@@ -31,6 +31,15 @@ def index():
         'topics_list': topics
            }
     return render_template('index.html', **data)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash(f'Login requested for user {form.username.data}, remember_me={form.remember_me.data}')
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Авторизация', form=form)
 
 
 @app.route('/topics/<topic_slug>')

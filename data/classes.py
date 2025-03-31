@@ -2,6 +2,9 @@ import datetime
 import sqlalchemy
 from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired
 
 from database.db_session import SqlAlchemyBase
 
@@ -37,3 +40,9 @@ class Message(SqlAlchemyBase):
     def __repr__(self):
         return f"Message(id={self.id}, content='{self.content[:10]}...')"
 
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
