@@ -1,30 +1,39 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+import datetime
+import sqlalchemy
+from sqlalchemy import orm
+from werkzeug.security import generate_password_hash, check_password_hash
 
-engine = create_engine('sqlite:///users.db', echo=True)
-
-Base = declarative_base()
+from database.db_session import SqlAlchemyBase
 
 
-class User(Base):
+class User(SqlAlchemyBase):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    username = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
+    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
 
-Base.metadata.create_all(engine)
+class Topic(SqlAlchemyBase):
+    __tablename__ = 'topics'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    title = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
+    messages = orm.relationship("Message", back_populates="topic")
+    description = sqlalchemy.Column(sqlalchemy.String)
+    slug = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+    def __repr__(self):
+        return f"Topic(id={self.id}, title='{self.title}')"
 
 
-def register_user(username, password):
-    existing_user = session.query(User).filter_by(username=username).first()
-    if existing_user:
-        pass
-    else:
-        new_user = User(username=username, password=password)
-        session.add(new_user)
-        session.commit()
+class Message(SqlAlchemyBase):
+    __tablename__ = 'messages'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True ,autoincrement=True)
+    content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
+    topic_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('topics.id'), nullable=False)
+    topic = orm.relationship("Topic", back_populates="messages")
+    # author_id = ... связь с моделью User
+    created_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+
+    def __repr__(self):
+        return f"Message(id={self.id}, content='{self.content[:10]}...')"
+
