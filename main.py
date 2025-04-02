@@ -51,19 +51,18 @@ def registration_new_user():
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(str(User.email) == str(form.email.data)).first():
+        if db_sess.query(User).filter(User.email == str(form.email.data)).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
             email=form.email.data,
-            password=form.password.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/')
+        return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
 
 

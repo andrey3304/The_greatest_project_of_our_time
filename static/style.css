@@ -26,5 +26,9 @@ body {
 }
 
 .alert alert-danger {
-  color: red;
+  text-align: center;
+  position: relative;
+  top: 20vh;
+  color: white;
+  background-color: blue;
 }
