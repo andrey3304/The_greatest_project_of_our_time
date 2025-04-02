@@ -1,16 +1,12 @@
 import datetime
 import sqlalchemy
 from sqlalchemy import orm
-from werkzeug.security import generate_password_hash, check_password_hash
+import hashlib
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, TextAreaField
+from wtforms.validators import DataRequired
 
 from database.db_session import SqlAlchemyBase
-
-
-class User(SqlAlchemyBase):
-    __tablename__ = 'users'
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    username = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
-    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
 
 class Topic(SqlAlchemyBase):
@@ -37,3 +33,28 @@ class Message(SqlAlchemyBase):
     def __repr__(self):
         return f"Message(id={self.id}, content='{self.content[:10]}...')"
 
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+
+class RegisterForm(FlaskForm):
+    name = StringField('Имя пользователя', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
+    email = EmailField('Почта', validators=[DataRequired()])
+    submit = SubmitField('Войти')
+
+class User(SqlAlchemyBase):
+    __tablename__ = 'users'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String, unique=False, nullable=False)
+    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
+    date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+
+    def set_password(self, password):
+        self.hashed_password = hashlib.sha256(password.encode()).hexdigest()

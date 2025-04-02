@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-  <form id="login">
-    <div class="center">
-      <div class="Signin_Welcome">Welcome to WTForum</div>
-      <div class="Inputs">
-        <div class="Login_InputLogin">
-          <label for="InputLogin" id="LabelInputLogin">Login</label>
-          <input type="name" id="InputLogin" placeholder="username" required>
+{% extends "base_login.html" %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        <div>
+            {{ form.csrf_token }}
         </div>
-        <div class="Login_InputPassword">
-          <label for="InputLogin" id="LabelInputPassword">Password</label>
-          <input type="password" id="InputPassword" placeholder="password" required>
-        </div>
-      </div>
-    </div>
-  </form>
-  <div class="SentData">
-    <button type="submit" form="login" class="ButtonSentData">Log in</button>
-  </div>
-</body>
-</html>
+        {% for field in form if field.name != 'csrf_token' %}
+            <div class="Inputs">
+                {{ field.label() }}
+                {{ field() }}
+                {% for error in field.errors %}
+                    <div class="error" style="color: red;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+{% endblock %}
