@@ -1,5 +1,7 @@
 from flask_socketio import SocketIO, emit, join_room
 from flask import Flask, render_template, redirect, flash, url_for
+from sqlalchemy.testing.suite.test_reflection import users
+
 from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
 from database import db_session
@@ -49,12 +51,17 @@ def registration_new_user():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
-                                   message="Пароли не совпадают")
+                                   message="Passwords don't match")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == str(form.email.data)).first():
+        if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
-                                   message="Такой пользователь уже есть")
+                                   message="There is already such a user")
+        if db_sess.query(User).filter(User.name == form.name.data):
+            print("name")
+            return render_template('register.html', title='Registration',
+                                   form=form,
+                                   message="username is busy")
         user = User(
             name=form.name.data,
             email=form.email.data,

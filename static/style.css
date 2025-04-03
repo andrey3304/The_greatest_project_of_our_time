@@ -32,3 +32,29 @@ body {
   color: white;
   background-color: blue;
 }
+
+.register_all {
+  color: white;
+}
+
+.register_h1 {
+  text-align: center;
+  position: relative;
+  top: 18vh;
+  font-size: 35px;
+  color: purple;
+  background-color:rgb(0, 0, 0);
+  font-family: cursive;
+  margin: 10px;
+}
+
+.Message_error {
+  text-align: center;
+  position: relative;
+  top: 23vh;
+  margin: 10px;
+  font-size: 28px;
+  color: red;
+  background-color:rgb(0, 0, 0);
+  font-family: Tahoma;
+}
