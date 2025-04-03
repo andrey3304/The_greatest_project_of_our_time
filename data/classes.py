@@ -42,16 +42,16 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField('Имя пользователя', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
-    email = EmailField('Почта', validators=[DataRequired()])
-    submit = SubmitField('Войти')
+    name = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password_again = PasswordField('Repeat the password', validators=[DataRequired()])
+    email = EmailField('Email', validators=[DataRequired()])
+    submit = SubmitField('Register')
 
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, nullable=True)
-    name = sqlalchemy.Column(sqlalchemy.String, unique=False, nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
