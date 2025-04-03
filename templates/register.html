@@ -1,8 +1,9 @@
 {% extends "base_login.html" %}
 
 {% block content %}
-<h1>Регистрация</h1>
-<form action="" method="post">
+<h1 class="register_h1" >Registration</h1>
+<h2 class="Message_error"> {{ message }}</h2>
+<form action="" method="post" class="register_all">
     {{ form.hidden_tag() }}
     <div class="Inputs">
         <p>
@@ -43,6 +44,5 @@
         </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     </div>
-    {{message}}
 </form>
 {% endblock %}
