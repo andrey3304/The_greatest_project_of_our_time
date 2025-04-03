@@ -72,7 +72,7 @@ def registration_new_user():
             return render_template('register.html', title='Registration',
                                    form=form,
                                    message="There is already such a user")
-        if db_sess.query(User).filter(User.name == form.name.data):
+        if db_sess.query(User).filter(User.name == form.name.data).first():
             print("name")
             return render_template('register.html', title='Registration',
                                    form=form,
