@@ -5,6 +5,7 @@
         <div>
             {{ form.csrf_token }}
         </div>
+        <div class="Login_error">{{ message }}</div>
         {% for field in form if field.name != 'csrf_token' %}
             <div class="Inputs">
                 {{ field.label() }}
