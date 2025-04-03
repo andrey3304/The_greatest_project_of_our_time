@@ -58,3 +58,14 @@ body {
   background-color:rgb(0, 0, 0);
   font-family: Tahoma;
 }
+
+.Login_error {
+  text-align: center;
+  position: relative;
+  top: 20vh;
+  margin: 10px;
+  font-size: 28px;
+  color: red;
+  background-color:rgb(0, 0, 0);
+  font-family: Tahoma;
+}
