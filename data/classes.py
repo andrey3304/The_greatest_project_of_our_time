@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, TextAreaField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash
+from sqlalchemy_serializer import SerializerMixin
 
 from database.db_session import SqlAlchemyBase
 
@@ -50,15 +50,16 @@ class RegisterForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Register')
 
-class User(SqlAlchemyBase, UserMixin):
+class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
+
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, unique=False, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
-    def set_password(self, password):
+    def changing_password_to_hash_password(self, password):
         self.hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
     def check_password(self, password):

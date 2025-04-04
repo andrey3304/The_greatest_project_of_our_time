@@ -7,6 +7,7 @@ from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
 from database import db_session
 from data.functions import slugify
+from data import users_api
 
 
 app = Flask(__name__)
@@ -73,7 +74,6 @@ def registration_new_user():
                                    form=form,
                                    message="There is already such a user")
         if db_sess.query(User).filter(User.name == form.name.data).first():
-            print("name")
             return render_template('register.html', title='Registration',
                                    form=form,
                                    message="username is busy")
@@ -81,7 +81,7 @@ def registration_new_user():
             name=form.name.data,
             email=form.email.data,
         )
-        user.set_password(form.password.data)
+        user.changing_password_to_hash_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
@@ -168,6 +168,7 @@ def on_join(data):
 
 
 def main():
+    app.register_blueprint(users_api.blueprint)
     db_session.global_init("database/forum_db.sqlite")
     app.run(debug=True)
 
