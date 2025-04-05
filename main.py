@@ -9,7 +9,6 @@ from database import db_session
 from data.functions import slugify
 from data import users_api
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -35,7 +34,7 @@ def index():
         'main_title': 'WTForum. Главная страница',
         'label_account_or_login': 'Войти',  # в зависимости от того, авторизован ли пользователь
         'topics_list': topics
-           }
+    }
     return render_template('index.html', **data)
 
 
@@ -165,6 +164,11 @@ def on_join(data):
     topic_slug = data['topic_slug']
     join_room(topic_slug)
     print(f"Client joined room: {topic_slug}")
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 def main():
