@@ -1,15 +1,20 @@
 from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect
-from data.classes import Topic, Message
+from flask import Flask, render_template, redirect, flash, url_for
+from sqlalchemy.testing.suite.test_reflection import users
+from flask_login import LoginManager, login_user, logout_user
+
+from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
 from database import db_session
 from data.functions import slugify
+from data import users_api
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 @app.route('/')
@@ -29,8 +34,57 @@ def index():
         'main_title': 'WTForum. Главная страница',
         'label_account_or_login': 'Войти',  # в зависимости от того, авторизован ли пользователь
         'topics_list': topics
-           }
+    }
     return render_template('index.html', **data)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.name == form.name.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Incorrect username or password",
+                               form=form)
+    return render_template('login.html', title='Authorization', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def registration_new_user():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Registration',
+                                   form=form,
+                                   message="Passwords don't match")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Registration',
+                                   form=form,
+                                   message="There is already such a user")
+        if db_sess.query(User).filter(User.name == form.name.data).first():
+            return render_template('register.html', title='Registration',
+                                   form=form,
+                                   message="username is busy")
+        user = User(
+            name=form.name.data,
+            email=form.email.data,
+        )
+        user.changing_password_to_hash_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Registration', form=form)
 
 
 @app.route('/topics/<topic_slug>')
@@ -112,8 +166,14 @@ def on_join(data):
     print(f"Client joined room: {topic_slug}")
 
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
 def main():
-    db_session.global_init("The_greatest_project_of_our_time/database/forum_db.sqlite")
+    app.register_blueprint(users_api.blueprint)
+    db_session.global_init("database/forum_db.sqlite")
     app.run(debug=True)
 
 
