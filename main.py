@@ -39,6 +39,11 @@ def index():
     return render_template('index.html', **data)
 
 
+@app.route('/profile_page')
+def profile_page():
+    return render_template('profile_page.html')
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
