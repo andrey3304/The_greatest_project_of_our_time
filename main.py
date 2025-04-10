@@ -1,7 +1,7 @@
 from flask_socketio import SocketIO, emit, join_room
 from flask import Flask, render_template, redirect, flash, url_for
 from sqlalchemy.testing.suite.test_reflection import users
-from flask_login import LoginManager, login_user, logout_user
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
@@ -30,9 +30,12 @@ def index():
     """
     db_sess = db_session.create_session()
     topics = db_sess.query(Topic).all()
+    is_auth = current_user.is_authenticated
+
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти',  # в зависимости от того, авторизован ли пользователь
+        'label_account_or_login': 'Войти' if not is_auth else current_user.name,
+        'url_account_or_login': '/login' if not is_auth else '#',
         'topics_list': topics
     }
     return render_template('index.html', **data)
@@ -102,9 +105,11 @@ def show_topic(topic_slug):
     db_sess = db_session.create_session()
     topics = db_sess.query(Topic).all()
     messages = db_sess.query(Message).join(Topic).filter(Topic.slug == str(topic_slug)).all()
+    is_auth = current_user.is_authenticated
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти',
+        'label_account_or_login': 'Войти' if not is_auth else current_user.name,
+        'url_account_or_login': '/login' if not is_auth else '#',
         'topics_list': topics,
         'messages': messages,
         'topic_slug': topic_slug,
@@ -144,14 +149,19 @@ def handle_new_message(data):
     print(data)
     topic_slug = data['topic_slug']
     message_text = data['message']
+    message_author = data['author']
+
+    print(message_author)
 
     db_sess = db_session.create_session()
     topic = db_sess.query(Topic).filter(Topic.slug == str(topic_slug)).first()
+
 
     if topic:
         message = Message()
         message.content = message_text
         message.topic_id = topic.id
+        message.author = message_author
         db_sess.add(message)
         db_sess.commit()
 
@@ -171,9 +181,16 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
 def main():
     app.register_blueprint(users_api.blueprint)
-    db_session.global_init("database/forum_db.sqlite")
+    db_session.global_init("The_greatest_project_of_our_time/database/forum_db.sqlite")
     app.run(debug=True)
 
 

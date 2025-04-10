@@ -29,7 +29,8 @@ class Message(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     topic_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('topics.id'), nullable=False)
     topic = orm.relationship("Topic", back_populates="messages")
-    # author_id = ... связь с моделью User
+    author = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('users.name'), nullable=False)
+    author_id = orm.relationship("User", backref="messages")
     created_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
     def __repr__(self):
@@ -49,6 +50,7 @@ class RegisterForm(FlaskForm):
     password_again = PasswordField('Repeat the password', validators=[DataRequired()])
     email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Register')
+
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
