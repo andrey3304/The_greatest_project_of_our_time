@@ -4,10 +4,17 @@
 <div class="content">
     <div class="messages-container" id="chat">
         {% for item in messages %}
-        <div class="message-box">
-            <h4>{{ item.id }}</h4>
+        {% if item.author == current_user.name %}
+        <div class="message-box-your">
+            <h4>Вы</h4>
             <p>{{ item.content }}</p>
         </div>
+        {% else %}
+        <div class="message-box">
+            <h4>{{ item.author }}</h4>
+            <p>{{ item.content }}</p>
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 
@@ -25,57 +32,81 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
     const socket = io();
-    const topicSlug = "{{ topic_slug }}";
-    const topicSlugStr = String(topicSlug);
+const topicSlug = "{{ topic_slug }}";
+const topicSlugStr = String(topicSlug);
 
-    socket.on('connect', () => {
-        socket.emit('join', { topic_slug: topicSlugStr });
-    });
+socket.on('connect', () => {
+    socket.emit('join', { topic_slug: topicSlugStr });
+});
 
-    socket.on('update_chat', (data) => {
-        if (data.topic_slug === topicSlugStr) {
-            const chatDiv = document.getElementById('chat');
+socket.on('connect_error', (error) => {
+    console.error('Ошибка подключения к сокету:', error);
+});
 
-            const messageBox = document.createElement('div');
-            messageBox.classList.add('message-box');
+socket.on('disconnect', () => {
+    console.log('Соединение с сокетом прервано.');
+});
 
-            const messageId = document.createElement('h4');
-            messageId.textContent = 'Новый ID (замените!)';
+socket.on('update_chat', (data) => {
+    if (data.topic_slug === topicSlugStr) {
+        const chatDiv = document.getElementById('chat');
 
-            const messageContent = document.createElement('p');
-            messageContent.textContent = data.message;
+        const messageBox = document.createElement('div');
+        messageBox.classList.add('message-box-your');
 
-            messageBox.appendChild(messageId);
-            messageBox.appendChild(messageContent);
+        const messageId = document.createElement('h4');
+        messageId.textContent = 'Вы';
 
-            chatDiv.appendChild(messageBox);
+        const messageContent = document.createElement('p');
+        messageContent.textContent = data.message;
 
-            chatDiv.scrollTop = chatDiv.scrollHeight;
+        messageBox.appendChild(messageId);
+        messageBox.appendChild(messageContent);
+
+        chatDiv.appendChild(messageBox);
+
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+});
+
+document.getElementById('send_button').addEventListener('click', () => {
+    const messageInput = document.getElementById('message_input');
+    const messageText = messageInput.value;
+    const current_user = getUsername();
+
+    if (messageText.trim() !== '' && current_user) {
+        socket.emit('new_message', { topic_slug: topicSlugStr, message: messageText, author: current_user });
+        messageInput.value = '';
+    } else {
+        const errorDiv = document.getElementById('error-message');
+        if (errorDiv) {
+            errorDiv.textContent = 'Пожалуйста, авторизуйтесь, чтобы отправлять сообщения.';
+            setTimeout(() => { errorDiv.textContent = ''; }, 3000);
+        } else {
+            alert('Пожалуйста, авторизуйтесь, чтобы отправлять сообщения.');
         }
+    }
+});
+
+document.getElementById('message_input').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('send_button').click();
+    }
+});
+
+function getUsername() {
+    const username = "{{ current_user.name }}";
+    return username ? username : null;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const chatContainer = document.getElementById('chat');
+    chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
     });
 
-    document.getElementById('send_button').addEventListener('click', () => {
-        const messageInput = document.getElementById('message_input');
-        const messageText = messageInput.value;
-        if (messageText.trim() !== '') {
-            socket.emit('new_message', { topic_slug: topicSlugStr, message: messageText });
-            messageInput.value = '';
-        }
-    });
-
-    document.getElementById('message_input').addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            document.getElementById('send_button').click();
-        }
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-       const chatContainer = document.getElementById('chat');
-
-       chatContainer.scrollTo({
-           top: chatContainer.scrollHeight,
-           behavior: 'smooth'
-    });
 });
 </script>
 {% endblock %}
