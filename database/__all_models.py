@@ -1,1 +1,1 @@
-from data.classes import Topic, Message
+from data.classes import Topic, Message, User

@@ -50,6 +50,7 @@ class RegisterForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Register')
 
+
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
 
@@ -64,3 +65,14 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     def check_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest() == self.hashed_password
+
+
+class ProfilePageClass(FlaskForm):
+    first_name = StringField(validators=[DataRequired()])
+    last_name = StringField(validators=[DataRequired()])
+    email = EmailField(validators=[DataRequired()])
+    phone_number = StringField(validators=[DataRequired()])
+    country = StringField(validators=[DataRequired()])
+    button_back_to_home = SubmitField('Back to home')
+    button_save_profile = SubmitField('Save Profile')
+    button_edit_profile = SubmitField('Edit Profile')

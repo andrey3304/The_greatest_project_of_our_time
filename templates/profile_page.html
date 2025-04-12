@@ -1,21 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile Page</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="../static/css/profile_style.css">
-</head>
-<body>
-  <div class="container rounded bg-white mt-5">
+{% extends "base_login.html" %}
+
+
+{% block content %}
+<form action="" method="post" class="register_all">
+    {{ form.hidden_tag() }}
+    <div class="container rounded bg-white mt-5">
     <div class="row">
         <div class="col-md-4 border-right">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                 <img class="rounded-circle mt-5" src="..\static\images\profile_anonym_photo.jpg" width="90">
-                <span class="font-weight-bold">John Doe</span>
-                <span class="text-black-50">john_doe12@bbb.com</span><span>United States</span>
+                <span class="font-weight-bold">{{ form.first_name }} {{ form.last_name }}</span>
+                <span class="text-black-50">{{ form.email }}</span><span>{{ form.country }}</span>
             </div>
         </div>
         <div class="col-md-8">
@@ -28,23 +23,27 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="first name"></div>
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="last name"></div>
+                    <div class="col-md-6"><p>{{ form.first_name }}</p></div>
+                    <div class="col-md-6"><p>{{ form.last_name }}</p></div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Email"></div>
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Phone number"></div>
+                    <div class="col-md-6"><p>{{ form.email(class="form-control", type="email") }}</p></div>
+                    <div class="col-md-6"><p>{{ form.phone_number }}</p></div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="address"></div>
-                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Country"></div>
+                    <div class="col-md-6"><p>{{ form.country }}</p></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-row align-items-center back">
+                        <p>{{ form.button_back_to_home(type="submit", class="profile_button_backtohome") }}</p>
+                      </div>
+                    </div>
                 </div>
                 <div class="mt-5 text-right">
-                  <button class="btn btn-primary profile-button" type="button">Save Profile</button>
+                  <p>{{ form.button_edit_profile(type="submit", class="btn btn-primary profile-button") }}</p>
                 </div>
             </div>
         </div>
     </div>
-  </div>
-</body>
-</html>
+</form>
+{% endblock %}

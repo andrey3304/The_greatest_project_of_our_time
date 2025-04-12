@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, flash, url_for
 from sqlalchemy.testing.suite.test_reflection import users
 from flask_login import LoginManager, login_user, logout_user
 
-from data.classes import Topic, Message, LoginForm, RegisterForm, User
+from data.classes import Topic, Message, LoginForm, RegisterForm, User, ProfilePageClass
 from data.forms import AddTopicForm
 from database import db_session
 from data.functions import slugify
@@ -39,8 +39,9 @@ def index():
     return render_template('index.html', **data)
 
 
-@app.route('/profile_page')
+@app.route('/profile_page', methods=['GET', 'POST'])
 def profile_page():
+    form = ProfilePageClass()
     return render_template('profile_page.html')
 
 
