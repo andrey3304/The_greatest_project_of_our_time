@@ -192,7 +192,7 @@ def logout():
 
 
 @app.route('/admin-panel')
-@login_required
+@login_required #
 def admin_panel():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == str(current_user.name)).first()
