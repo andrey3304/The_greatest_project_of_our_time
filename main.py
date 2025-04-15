@@ -1,12 +1,12 @@
 from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect, flash, url_for
+from flask import Flask, render_template, redirect, flash, url_for, request
 from sqlalchemy.testing.suite.test_reflection import users
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
 from database import db_session
-from data.functions import slugify
+from data.functions import make_slug
 from data import users_api
 
 app = Flask(__name__)
@@ -15,6 +15,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 
 
 @app.route('/')
@@ -119,17 +120,6 @@ def show_topic(topic_slug):
 
 @app.route('/add_topic', methods=['GET', 'POST'])
 def add_topic():
-    """
-        Эта функция обрабатывает добавление новой темы в WTForum. Она подготавливает данные для шаблона 'add_topic.html'
-        и отображает его. Если форма отправлена и проверена, она перенаправляет пользователя на главную страницу.
-
-        Параметры:
-        - Нет
-
-        Возвращает:
-        - render_template: Отображенный шаблон 'add_topic.html' с предоставленными данными. Если форма отправлена и проверена,
-                          возвращается перенаправление на главную страницу ('/').
-    """
     db_sess = db_session.create_session()
     topics = db_sess.query(Topic).all()
     db_sess.close()
@@ -138,8 +128,19 @@ def add_topic():
         'label_account_or_login': 'Войти',
         'topics_list': topics,
     }
+
     form = AddTopicForm()
-    if form.validate_on_submit():
+
+    if request.method == 'POST' and form.validate_on_submit():
+        topic = Topic()
+        topic.title = form.name.data
+        topic.description = form.about.data
+        topic.slug = make_slug(form.name.data)
+        topic.status = 'wait'
+
+        db_sess.add(topic)
+        db_sess.commit()
+        db_sess.close()
         return redirect('/')
     return render_template('add_topic.html', title='WTForum. Добавление темы.', form=form, **data)
 
@@ -176,7 +177,9 @@ def on_join(data):
     print(f"Client joined room: {topic_slug}")
 
 
+
 @app.route('/about')
+@login_required
 def about():
     return render_template('about.html')
 
@@ -186,6 +189,25 @@ def about():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/admin-panel')
+@login_required
+def admin_panel():
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.name == str(current_user.name)).first()
+    if user.status == 'admin':
+        unchecked_topics = db_sess.query(Topic).filter(Topic.status == 'wait')
+        return render_template('admin.html', topics=unchecked_topics)
+    else:
+        return redirect("/admin-error")
+
+
+@app.route('/admin-error')
+def admin_error():
+    return render_template('error_admin.html')
+
+
 
 
 def main():

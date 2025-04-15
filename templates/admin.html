@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Управление темами</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-panel-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .themes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .themes-table th, .themes-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .themes-table th {
+            background-color: #f2f2f2;
+        }
+
+        .actions-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            margin-left: 10px;
+        }
+
+        .button-publish {
+            background-color: #4CAF50;
+        }
+
+        .button-reject {
+            background-color: #f44336;
+        }
+
+        .button-publish:hover {
+            background-color: #367c39;
+        }
+
+        .button-reject:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="admin-panel-header">Админ-панель</div>
+
+        <h2>Темы на модерации</h2>
+
+        <table class="themes-table">
+            <thead>
+                <tr>
+                    <th>Выбрать</th>
+                    <th>ID</th>
+                    <th>Заголовок</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in topics%}
+                <tr>
+                    <td><input type="checkbox" name="theme_ids[]" value="1"></td>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="actions-container">
+            <button class="button button-publish" onclick="processThemes('publish')">Опубликовать выбранные</button>
+            <button class="button button-reject" onclick="processThemes('reject')">Отклонить выбранные</button>
+        </div>
+    </div>
+
+    <script>
+        function processThemes(action) {
+            const selectedThemeIds = Array.from(document.querySelectorAll('input[name="theme_ids[]"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedThemeIds.length === 0) {
+                alert('Пожалуйста, выберите хотя бы одну тему.');
+                return;
+            }
+
+            const confirmationMessage = `Вы уверены, что хотите ${action === 'publish' ? 'опубликовать' : 'отклонить'} выбранные темы (${selectedThemeIds.join(', ')})?`;
+            if (!confirm(confirmationMessage)) {
+                return;
+            }
+
+            fetch('/admin/themes/batch/' + action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ theme_ids: selectedThemeIds })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка сети: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Успешно:', data);
+                alert('Темы успешно ' + (action === 'publish' ? 'опубликованы' : 'отклонены'));
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при выполнении действия.');
+            });
+        }
+    </script>
+
+</body>
+</html>
