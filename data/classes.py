@@ -66,6 +66,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     def check_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest() == self.hashed_password
 
+    def __repr__(self):
+        return f"User(name='{self.name}')"
+
 
 class ProfilePageClass(FlaskForm):
     first_name = StringField(validators=[DataRequired()])
@@ -76,3 +79,13 @@ class ProfilePageClass(FlaskForm):
     button_back_to_home = SubmitField('Back to home')
     button_save_profile = SubmitField('Save Profile')
     button_edit_profile = SubmitField('Edit Profile')
+
+
+'''class UsersAPI(SqlAlchemyBase, UserMixin):
+    __tablename__ = 'users_api'
+
+    user = sqlalchemy.Column(sqlalchemy.String, unique=False, nullable=False)
+
+    def __repr__(self):
+        return f"UsersAPI(user='{self.user}')"
+'''

@@ -1,7 +1,8 @@
 from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect, flash, url_for
+from flask import Flask, render_template, redirect, flash, url_for, request
 from sqlalchemy.testing.suite.test_reflection import users
 from flask_login import LoginManager, login_user, logout_user
+import requests
 
 from data.classes import Topic, Message, LoginForm, RegisterForm, User, ProfilePageClass
 from data.forms import AddTopicForm
@@ -16,6 +17,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+RECAPTCHA_SECRET_KEY = "6LfL-xorAAAAAAR--AGOGkTyw9q5eyAP2qMlboG5"
 
 
 @app.route('/')
@@ -57,6 +60,23 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.name == form.name.data).first()
+        recaptcha_response = request.form.get('g-recaptcha-response')
+
+        # Проверка капчи
+        if not recaptcha_response:
+            return "Капча не пройдена", 400
+
+        # Отправка запроса к Google reCAPTCHA
+        verify_url = "https://www.google.com/recaptcha/api/siteverify"
+        payload = {
+            'secret': RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        response = requests.post(verify_url, data=payload).json()
+
+        if not response.get('success'):
+            return "Капча не пройдена", 400
+
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")

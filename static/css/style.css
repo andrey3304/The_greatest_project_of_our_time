@@ -69,3 +69,20 @@ body {
   background-color:rgb(0, 0, 0);
   font-family: Tahoma;
 }
+
+.g-recaptcha {
+  text-align: center;
+  position: relative;
+  top: 20vh;
+  margin: 10px;
+  font-size: 28px;
+  color: red;
+  background-color:rgb(0, 0, 0);
+  font-family: Tahoma;
+}
+
+.captcha_login {
+  position: relative;
+  border
+  top: 20px;
+}

@@ -3,6 +3,9 @@
 <div class="content">
         <div class="start-mes">
             <h2>ВЫБЕРИ ТЕМУ И ЗДЕСЬ ПОЯВЯТСЯ СООБЩЕНИЯ!</h2>
+            {% if current_user.is_authenticated %}
+                <div><h3>current_user.is_authenticated</h3></div>
+            {% endif %}
         </div>
 </div>
 {% endblock %}
