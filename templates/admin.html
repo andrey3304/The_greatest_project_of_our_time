@@ -95,7 +95,7 @@
             <tbody>
                 {% for item in topics%}
                 <tr>
-                    <td><input type="checkbox" name="theme_ids[]" value="1"></td>
+                    <td><input type="checkbox" name="theme_ids" value="{{ item.id }}"></td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.title }}</td>
                     <td>{{ item.description }}</td>
@@ -112,7 +112,7 @@
 
     <script>
         function processThemes(action) {
-            const selectedThemeIds = Array.from(document.querySelectorAll('input[name="theme_ids[]"]:checked'))
+            const selectedThemeIds = Array.from(document.querySelectorAll('input[name="theme_ids"]:checked'))
                 .map(checkbox => checkbox.value);
 
             if (selectedThemeIds.length === 0) {
@@ -125,7 +125,7 @@
                 return;
             }
 
-            fetch('/admin/themes/batch/' + action, {
+            fetch('/admin/themes/' + action, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

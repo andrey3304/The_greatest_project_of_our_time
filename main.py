@@ -30,7 +30,7 @@ def index():
        render_template: Отображенный HTML-шаблон с предоставленными данными.
     """
     db_sess = db_session.create_session()
-    topics = db_sess.query(Topic).all()
+    topics = db_sess.query(Topic).filter(Topic.status == 'ok')
     is_auth = current_user.is_authenticated
 
     data = {
@@ -104,7 +104,7 @@ def show_topic(topic_slug):
         render_template: Отображенный HTML-шаблон с предоставленными данными.
     """
     db_sess = db_session.create_session()
-    topics = db_sess.query(Topic).all()
+    topics = db_sess.query(Topic).filter(Topic.status == 'ok')
     messages = db_sess.query(Message).join(Topic).filter(Topic.slug == str(topic_slug)).all()
     is_auth = current_user.is_authenticated
     data = {
@@ -121,7 +121,7 @@ def show_topic(topic_slug):
 @app.route('/add_topic', methods=['GET', 'POST'])
 def add_topic():
     db_sess = db_session.create_session()
-    topics = db_sess.query(Topic).all()
+    topics = db_sess.query(Topic).filter(Topic.status == 'ok')
     db_sess.close()
     data = {
         'main_title': 'WTForum. Главная страница',
@@ -208,6 +208,17 @@ def admin_error():
     return render_template('error_admin.html')
 
 
+@app.route('/admin/themes/<action>', methods=['POST'])
+def topic_admin(action):
+    themes_id = request.json['theme_ids']
+    db_sess = db_session.create_session()
+    status = 'reject 'if action == 'reject' else 'ok'
+    for i in themes_id:
+        topic = db_sess.query(Topic).filter(Topic.id == int(i)).first()
+        topic.status = status
+        db_sess.commit()
+    db_sess.close()
+    return {'status': 'ok'}
 
 
 def main():
