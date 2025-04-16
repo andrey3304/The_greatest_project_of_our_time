@@ -1,13 +1,13 @@
-from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect, flash, url_for, request
-from sqlalchemy.testing.suite.test_reflection import users
+from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from flask_socketio import SocketIO, emit, join_room
 
-from data.classes import Topic, Message, LoginForm, RegisterForm, User
-from data.forms import AddTopicForm
-from database import db_session
-from data.functions import make_slug
 from data import users_api
+from data.classes import Topic, Message, LoginForm, RegisterForm, User
+from data.external_apis import WeatherApiClient
+from data.forms import AddTopicForm
+from data.functions import make_slug
+from database import db_session
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
@@ -15,7 +15,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+api_client = WeatherApiClient()
 
 
 @app.route('/')
@@ -147,12 +147,10 @@ def add_topic():
 
 @socketio.on('new_message')
 def handle_new_message(data):
-    print(data)
     topic_slug = data['topic_slug']
     message_text = data['message']
     message_author = data['author']
 
-    print(message_author)
 
     db_sess = db_session.create_session()
     topic = db_sess.query(Topic).filter(Topic.slug == str(topic_slug)).first()
@@ -160,9 +158,23 @@ def handle_new_message(data):
 
     if topic:
         message = Message()
-        message.content = message_text
-        message.topic_id = topic.id
+        if message_text.strip().split()[0] == 'Информация':
+            city = api_client.get_city_weather_info(message_text.strip().split()[1])
+            if city != 'error':
+                name = city['city']
+                country = city['country']
+                localtime = city['localtime']
+                temp = city['temp']
+                text = city['text']
+                wind = city['wind']
+                message.content = f'Бот. Город: {name}. Страна: {country}. Местное время: {localtime}. Температура: {temp}℃. Погода: {text}. Ветер: {wind} м.с.'
+                message_text = message.content
+            else:
+                message.content = message_text
+        else:
+            message.content = message_text
         message.author = message_author
+        message.topic_id = topic.id
         db_sess.add(message)
         db_sess.commit()
 
