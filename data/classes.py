@@ -16,8 +16,9 @@ class Topic(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
     messages = orm.relationship("Message", back_populates="topic")
-    description = sqlalchemy.Column(sqlalchemy.String)
+    description = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     slug = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
+    status = sqlalchemy.Column(sqlalchemy.String(255), nullable=False)
 
     def __repr__(self):
         return f"Topic(id={self.id}, title='{self.title}')"
@@ -60,6 +61,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    status = sqlalchemy.Column(sqlalchemy.String, default='user')
 
     def changing_password_to_hash_password(self, password):
         self.hashed_password = hashlib.sha256(password.encode()).hexdigest()

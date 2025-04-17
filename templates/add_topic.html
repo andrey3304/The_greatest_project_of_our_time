@@ -1,16 +1,29 @@
 {% extends "base.html" %}
-
 {% block content %}
     <div class="content">
         <h2>Добавить тему</h2>
         <form method="POST" action="" class="add-topic-form">
-            {{ form.csrf_token }}
+            {{ form.csrf_token }}  {#  Вставьте CSRF-токен #}
 
             <label for="{{ form.name.id }}">{{ form.name.label }}</label>
-            <input type="text" id="{{ form.name.id }}" name="{{ form.name.name }}" {{ form.name.render_kw }}>
+            {{ form.name() }}  {#  Render the form field using its __call__ method #}
+            {% if form.name.errors %}
+                <ul class="errors">
+                    {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
             <label for="{{ form.about.id }}">{{ form.about.label }}</label>
-            <textarea id="{{ form.about.id }}" name="{{ form.about.name }}" {{ form.about.render_kw }}></textarea>
+            {{ form.about() }} {# Render the form field using its __call__ method #}
+            {% if form.about.errors %}
+                <ul class="errors">
+                    {% for error in form.about.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
             <input type="submit" value="Отправить">
         </form>

@@ -4,20 +4,31 @@ from data.classes import User
 from database.db_session import create_session
 
 
-def slugify(text):
-    """
-        Преобразует заданную строку в URL-пригодный слаг.
+import re
+import unicodedata
 
-        Параметры:
-        text (str): Входная строка для создания слага.
+import re
+import unicodedata
+from slugify import slugify
 
-        Возвращает:
-        str: Слаговая версия входной строки.
+def make_slug(text):
     """
-    text = str(unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8'))
-    text = re.sub(r'[^\w\s-]', '', text.lower())
-    text = re.sub(r'[\s_-]+', '-', text).strip('-')
-    return text
+    Создает слаг из текста, транслитерируя кириллицу в латиницу и удаляя недопустимые символы.
+    """
+    text = str(text)  # Преобразуем в строку, если это необходимо
+
+    # Транслитерация кириллицы в латиницу с помощью python-slugify
+    slug = slugify(text, lowercase=True) # to_lower=True преобразует все в нижний регистр
+
+    # Удаляем повторяющиеся дефисы (если они остались после slugify)
+    slug = re.sub(r"-+", "-", slug)
+
+    # Удаляем дефисы в начале и конце строки
+    slug = slug.strip("-")
+
+    return slug
+
+
 
 
 def register_user(username, password):
@@ -43,3 +54,4 @@ def register_user(username, password):
         new_user = User(username=username, password=password)
         session.add(new_user)
         session.commit()
+
