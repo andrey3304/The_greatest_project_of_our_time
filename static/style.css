@@ -69,3 +69,34 @@ body {
   background-color:rgb(0, 0, 0);
   font-family: Tahoma;
 }
+
+.login_captcha_body {
+    font-family: Arial, sans-serif;
+    position: relative;
+    top: 30vh;
+    max-width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: purple;
+}
+
+.login_captcha {
+    margin: 20px 0;
+    padding: 15px;
+    background: black;
+    border-radius: 5px;
+}
+
+.login_captcha_inp {
+    padding: 8px;
+    width: 60px;
+    background: black;
+    color: white;
+}
+
+.login_captcha_error {
+    color: red;
+    margin-top: 10px;
+}
