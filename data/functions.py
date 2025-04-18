@@ -1,5 +1,7 @@
 import re
 import unicodedata
+import random
+
 from data.classes import User
 from database.db_session import create_session
 
@@ -43,3 +45,21 @@ def register_user(username, password):
         new_user = User(username=username, password=password)
         session.add(new_user)
         session.commit()
+
+
+def generate_equation_for_captcha():
+    a = random.randint(10, 18)
+    b = random.randint(1, 10)
+    operation = random.choice(['+', '-', '*'])
+
+    if operation == '+':
+        answer = a + b
+        equation = f"{a} + {b}"
+    elif operation == '-':
+        answer = a - b
+        equation = f"{a} - {b}"
+    else:
+        answer = a * b
+        equation = f"{a} × {b}"
+
+    return equation, answer

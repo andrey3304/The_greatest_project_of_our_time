@@ -2,12 +2,14 @@ from flask_socketio import SocketIO, emit, join_room
 from flask import Flask, render_template, redirect, flash, url_for, request
 from sqlalchemy.testing.suite.test_reflection import users
 from flask_login import LoginManager, login_user, logout_user
+import time
 import requests
+import random
 
 from data.classes import Topic, Message, LoginForm, RegisterForm, User, ProfilePageClass
 from data.forms import AddTopicForm
 from database import db_session
-from data.functions import slugify
+from data.functions import slugify, generate_equation_for_captcha
 from data import users_api
 
 
@@ -57,33 +59,40 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    equation, answer = generate_equation_for_captcha()
+    captcha_error = None
+
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.name == form.name.data).first()
-        recaptcha_response = request.form.get('g-recaptcha-response')
+        # Проверяем капчу только если форма валидна
+        try:
+            expected_answer = int(request.form.get('expected_answer', 0))
+            user_answer = int(request.form.get('user_answer', 0))
 
-        # Проверка капчи
-        if not recaptcha_response:
-            return "Капча не пройдена", 400
+            if user_answer != expected_answer:
+                equation, answer = generate_equation_for_captcha()
+                captcha_error = "Wrong answer, try again."
+            else:
+                # Капча верна, проверяем логин/пароль
+                db_sess = db_session.create_session()
+                user = db_sess.query(User).filter(User.name == form.name.data).first()
 
-        # Отправка запроса к Google reCAPTCHA
-        verify_url = "https://www.google.com/recaptcha/api/siteverify"
-        payload = {
-            'secret': RECAPTCHA_SECRET_KEY,
-            'response': recaptcha_response
-        }
-        response = requests.post(verify_url, data=payload).json()
+                if not (user and user.check_password(form.password.data)):
+                    raise ValueError
+                if user and user.check_password(form.password.data):
+                    login_user(user, remember=form.remember_me.data)
+                    return redirect("/")
+                else:
+                    message = "Incorrect username or password"
+        except ValueError:
+            equation, answer = generate_equation_for_captcha()
+            captcha_error = "Please enter a valid number for the captcha"
 
-        if not response.get('success'):
-            return "Капча не пройдена", 400
-
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/")
-        return render_template('login.html',
-                               message="Incorrect username or password",
-                               form=form)
-    return render_template('login.html', title='Authorization', form=form)
+    return render_template('login.html',
+                           title='Authorization',
+                           form=form,
+                           equation=equation,
+                           answer=answer,
+                           captcha_error=captcha_error)
 
 
 @app.route('/register', methods=['GET', 'POST'])
