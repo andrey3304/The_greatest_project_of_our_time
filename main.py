@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, emit, join_room
 
 from data import users_api
 from data.classes import Topic, Message, LoginForm, RegisterForm, User
+from data.config import DATABASE_ADRESS
 from data.external_apis import WeatherApiClient
 from data.forms import AddTopicForm
 from data.functions import make_slug
@@ -235,7 +236,7 @@ def topic_admin(action):
 
 def main():
     app.register_blueprint(users_api.blueprint)
-    db_session.global_init("The_greatest_project_of_our_time/database/forum_db.sqlite")
+    db_session.global_init(DATABASE_ADRESS)
     app.run(debug=True)
 
 

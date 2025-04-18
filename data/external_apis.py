@@ -1,11 +1,10 @@
 import requests
-
-weather_key = 'd56f959f3b19480eb8a135752251604'
+from data.config import WEATHER_API_KEY
 
 
 class WeatherApiClient:
     def __init__(self):
-        self.api_key = weather_key
+        self.api_key = WEATHER_API_KEY
         self.base_url = 'http://api.weatherapi.com/v1/current.json'
 
     def get_city_weather_info(self, city):
