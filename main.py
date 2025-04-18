@@ -52,16 +52,40 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    equation, answer = generate_equation_for_captcha()
+    captcha_error = None
+
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.name == form.name.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/")
-        return render_template('login.html',
-                               message="Incorrect username or password",
-                               form=form)
-    return render_template('login.html', title='Authorization', form=form)
+        # Проверяем капчу только если форма валидна
+        try:
+            expected_answer = int(request.form.get('expected_answer', 0))
+            user_answer = int(request.form.get('user_answer', 0))
+
+            if user_answer != expected_answer:
+                equation, answer = generate_equation_for_captcha()
+                captcha_error = "Wrong answer, try again."
+            else:
+                # Капча верна, проверяем логин/пароль
+                db_sess = db_session.create_session()
+                user = db_sess.query(User).filter(User.name == form.name.data).first()
+
+                if not (user and user.check_password(form.password.data)):
+                    raise ValueError
+                if user and user.check_password(form.password.data):
+                    login_user(user, remember=form.remember_me.data)
+                    return redirect("/")
+                else:
+                    message = "Incorrect username or password"
+        except ValueError:
+            equation, answer = generate_equation_for_captcha()
+            captcha_error = "Please enter a valid number for the captcha"
+
+    return render_template('login.html',
+                           title='Authorization',
+                           form=form,
+                           equation=equation,
+                           answer=answer,
+                           captcha_error=captcha_error)
 
 
 @app.route('/register', methods=['GET', 'POST'])
