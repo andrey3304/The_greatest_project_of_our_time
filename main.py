@@ -1,17 +1,12 @@
+from flask import Flask, render_template, redirect, request
+from flask_login import LoginManager, login_user
 from flask_socketio import SocketIO, emit, join_room
-from flask import Flask, render_template, redirect, flash, url_for, request
-from sqlalchemy.testing.suite.test_reflection import users
-from flask_login import LoginManager, login_user, logout_user
-import time
-import requests
-import random
 
+from data import users_api
 from data.classes import Topic, Message, LoginForm, RegisterForm, User, ProfilePageClass
 from data.forms import AddTopicForm
+from data.functions import generate_equation_for_captcha
 from database import db_session
-from data.functions import slugify, generate_equation_for_captcha
-from data import users_api
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
@@ -19,8 +14,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-RECAPTCHA_SECRET_KEY = "6LfL-xorAAAAAAR--AGOGkTyw9q5eyAP2qMlboG5"
 
 
 @app.route('/')
@@ -40,24 +33,50 @@ def index():
         'main_title': 'WTForum. Главная страница',
         'label_account_or_login': 'Войти',  # в зависимости от того, авторизован ли пользователь
         'topics_list': topics
-           }
+    }
     return render_template('index.html', **data)
 
 
 @app.route('/profile_page', methods=['GET', 'POST'])
 def profile_page():
+    """
+    Обрабатывает запросы к странице профиля пользователя.
+    При GET-запросе отображает шаблон profile_page.html.
+    При POST-запросе может обрабатывать данные формы изменения профиля.
+    Возвращает:
+        render_template: Отрендеренный шаблон страницы профиля
+    """
     form = ProfilePageClass()
     return render_template('profile_page.html')
 
 
 @login_manager.user_loader
 def load_user(user_id):
+    """
+    Загружает пользователя из базы данных по его ID.
+    Используется Flask-Login для управления сессиями пользователей.
+    Параметры:
+        user_id: ID пользователя для загрузки
+    Возвращает:
+        User: Объект пользователя или None, если пользователь не найден
+    """
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Обрабатывает логин пользователя с защитой капчей.
+    При GET-запросе отображает форму входа.
+    При POST-запросе:
+        1. Проверяет корректность капчи
+        2. Проверяет логин и пароль
+        3. При успешной аутентификации перенаправляет на главную страницу
+    В случае ошибок отображает соответствующие сообщения.
+    Возвращает:
+        render_template: Отрендеренный шаблон login.html или redirect на главную страницу
+    """
     form = LoginForm()
     equation, answer = generate_equation_for_captcha()
     captcha_error = None
@@ -97,6 +116,18 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def registration_new_user():
+    """
+    Обрабатывает регистрацию новых пользователей.
+    При GET-запросе отображает форму регистрации.
+    При POST-запросе:
+        1. Проверяет совпадение паролей
+        2. Проверяет уникальность email и имени пользователя
+        3. Создает нового пользователя и хэширует его пароль
+        4. Перенаправляет на страницу входа после успешной регистрации
+    В случае ошибок отображает соответствующие сообщения.
+    Возвращает:
+        render_template: Отрендеренный шаблон register.html или redirect на страницу входа
+    """
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
