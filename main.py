@@ -1,10 +1,9 @@
 from flask import Flask, render_template, redirect, request, flash, url_for, current_app
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, emit, join_room
-from flask_wtf import FlaskForm
 from werkzeug.routing import Rule
-from werkzeug.utils import secure_filename
-import os, datetime
+from loguru import logger
+import os
 
 
 from data import users_api
@@ -22,6 +21,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'  # Куда перенаправлять неавторизованных пользователей
+
+# Настройка логгера
+logger.add('database/logging/debug.json', format='{time} {level} {message}',
+           level='DEBUG', rotation='10:00', compression='zip',
+           serialize=True)
 
 
 @app.route('/')
@@ -355,6 +359,7 @@ def on_join(data):
     print(f"Client joined room: {topic_slug}")
 
 
+@logger.catch()
 def main():
     app.register_blueprint(users_api.blueprint)
     db_session.global_init("database/forum_db.sqlite")
