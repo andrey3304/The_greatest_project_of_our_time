@@ -107,15 +107,12 @@ body {
 }
 
 .break_pass_prof_page {
-  background-color: #0d6efd;
+  background-color: #4285F4;
   border: 1px solid #ddd;
   color: white;
   margin-top: 0;
   margin-bottom: 1rem;
-}
-
-.break_pass_prof_page:hover {
-  background-color: grey;
+  border-radius: 4px;
 }
 
 /* Полностью скрываем оригинальный input */
@@ -144,7 +141,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.styled-upload-btn:hover {
+.styled-upload-btn:hover, .break_pass_prof_page:hover {
     background: #3367D6;
 }
 

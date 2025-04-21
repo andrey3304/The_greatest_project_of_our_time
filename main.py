@@ -204,21 +204,60 @@ def registration_new_user():
     Возвращает:
         render_template: Отрендеренный шаблон register.html или redirect на страницу входа
     """
+    equation, answer = generate_equation_for_captcha()
+    captcha_error = None
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
+            equation, answer = generate_equation_for_captcha()
             return render_template('register.html', title='Registration',
                                    form=form,
-                                   message="Passwords don't match")
+                                   message="Passwords don't match",
+                                       captcha_error=captcha_error,
+                                       equation=equation,
+                                       answer=answer)
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
+            equation, answer = generate_equation_for_captcha()
             return render_template('register.html', title='Registration',
                                    form=form,
-                                   message="There is already such a user")
+                                   message="There is already such a user",
+                                       captcha_error=captcha_error,
+                                       equation=equation,
+                                       answer=answer)
         if db_sess.query(User).filter(User.name == form.name.data).first():
+            equation, answer = generate_equation_for_captcha()
             return render_template('register.html', title='Registration',
                                    form=form,
-                                   message="username is busy")
+                                   message="username is busy",
+                                       captcha_error=captcha_error,
+                                       equation=equation,
+                                       answer=answer)
+
+        # Проверяем капчу только если форма валидна
+        try:
+            expected_answer = int(request.form.get('expected_answer', 0))
+            user_answer = int(request.form.get('user_answer', 0))
+
+            if user_answer != expected_answer:
+                equation, answer = generate_equation_for_captcha()
+                captcha_error = "Wrong answer, try again."
+                return render_template('register.html',
+                                       title='Registration',
+                                       form=form,
+                                       captcha_error=captcha_error,
+                                       equation=equation,
+                                       answer=answer)
+        except ValueError:
+            equation, answer = generate_equation_for_captcha()
+            captcha_error = "Please enter a valid number for the captcha"
+            return render_template('register.html',
+                                   title='Registration',
+                                   form=form,
+                                   captcha_error=captcha_error,
+                                   equation=equation,
+                                   answer=answer)
+
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -227,7 +266,11 @@ def registration_new_user():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Registration', form=form)
+    return render_template('register.html',
+                           title='Registration', form=form,
+                           captcha_error=captcha_error,
+                           equation=equation,
+                           answer=answer)
 
 
 @app.route('/topics/<topic_slug>')
