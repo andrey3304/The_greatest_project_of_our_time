@@ -100,3 +100,28 @@ body {
     color: red;
     margin-top: 10px;
 }
+
+.break_pass_prof_page {
+  background-color: #0d6efd;
+  border: 1px solid #ddd;
+  color: white;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.break_pass_prof_page:hover {
+  background-color: grey;
+}
+
+.ava_change_input, .ava_change_button {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.ava_change_button {
+  background-color: #0d6efd;
+  color: white;
+  border: 1px solid #ddd;
+  border-top-right-radius: 90px;
+  border-bottom-left-radius: 80px;
+}

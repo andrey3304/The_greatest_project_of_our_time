@@ -1,6 +1,7 @@
 import re
 import unicodedata
 import random
+import datetime
 
 from data.classes import User
 from database.db_session import create_session
@@ -63,3 +64,16 @@ def generate_equation_for_captcha():
         equation = f"{a} × {b}"
 
     return equation, answer
+
+
+def generate_name_for_avatar_photo(user_id, filename):
+    # имя файла формируется из user_id, текущего времени и рандомные числа 1 - 10
+    name_for_fut_file = (str(user_id) + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) +
+                         str(random.randint(0, 9)))
+    ext = filename.rsplit('.', 1)[1].lower()
+    return f'{name_for_fut_file}.{ext}'
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}

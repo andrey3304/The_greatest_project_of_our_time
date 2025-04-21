@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy import orm
 import hashlib
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField
 from wtforms.validators import DataRequired
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
@@ -59,6 +59,10 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    ava_photo = sqlalchemy.Column(sqlalchemy.String(120))
+
+    def get_id(self):  # Flask-Login требует метод get_id()
+        return str(self.id)  # Преобразуем в строку (стандарт для сессий)
 
     def changing_password_to_hash_password(self, password):
         self.hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -67,25 +71,4 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         return hashlib.sha256(password.encode()).hexdigest() == self.hashed_password
 
     def __repr__(self):
-        return f"User(name='{self.name}')"
-
-
-class ProfilePageClass(FlaskForm):
-    first_name = StringField(validators=[DataRequired()])
-    last_name = StringField(validators=[DataRequired()])
-    email = EmailField(validators=[DataRequired()])
-    phone_number = StringField(validators=[DataRequired()])
-    country = StringField(validators=[DataRequired()])
-    button_back_to_home = SubmitField('Back to home')
-    button_save_profile = SubmitField('Save Profile')
-    button_edit_profile = SubmitField('Edit Profile')
-
-
-'''class UsersAPI(SqlAlchemyBase, UserMixin):
-    __tablename__ = 'users_api'
-
-    user = sqlalchemy.Column(sqlalchemy.String, unique=False, nullable=False)
-
-    def __repr__(self):
-        return f"UsersAPI(user='{self.user}')"
-'''
+        return f"User(name='{self.name}', email='{self.email}')"

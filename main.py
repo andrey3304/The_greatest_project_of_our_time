@@ -1,22 +1,32 @@
-from flask import Flask, render_template, redirect, request
-from flask_login import LoginManager, login_user
+from flask import Flask, render_template, redirect, request, flash, url_for, current_app
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, emit, join_room
+from flask_wtf import FlaskForm
+from werkzeug.routing import Rule
+from werkzeug.utils import secure_filename
+import os, datetime
+
 
 from data import users_api
-from data.classes import Topic, Message, LoginForm, RegisterForm, User, ProfilePageClass
+from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.forms import AddTopicForm
-from data.functions import generate_equation_for_captcha
+from data.functions import generate_equation_for_captcha, generate_name_for_avatar_photo, allowed_file
 from database import db_session
 
+# Настройка Flask и socketio
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'wtforum_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+# Настройка Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'  # Куда перенаправлять неавторизованных пользователей
 
 
 @app.route('/')
+@app.route('/index')
+@login_required
 def index():
     """
        Эта функция обрабатывает главную страницу WTForum. Она подготавливает данные для шаблона index.html и отображает его.
@@ -31,37 +41,94 @@ def index():
     topics = db_sess.query(Topic).all()
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти',  # в зависимости от того, авторизован ли пользователь
+        'label_account_or_login': 'Профиль',
         'topics_list': topics
     }
     return render_template('index.html', **data)
 
 
 @app.route('/profile_page', methods=['GET', 'POST'])
+@login_required
 def profile_page():
     """
     Обрабатывает запросы к странице профиля пользователя.
-    При GET-запросе отображает шаблон profile_page.html.
+    При GET-запросе отображает шаблон profile.html.
     При POST-запросе может обрабатывать данные формы изменения профиля.
     Возвращает:
         render_template: Отрендеренный шаблон страницы профиля
     """
-    form = ProfilePageClass()
-    return render_template('profile_page.html')
+    return render_template('profile.html', user=current_user,
+                         title=f"Профиль {current_user.name}")
 
 
+@app.route('/upload_avatar', methods=['POST'])
+@login_required  # Добавляем защиту роута
+def upload_avatar():
+    if 'avatar' not in request.files:
+        flash('Файл не выбран', 'error')
+        return redirect(request.url)
+
+    file = request.files['avatar']
+    if file.filename == '':
+        flash('Файл не выбран', 'error')
+        return redirect(request.url)
+
+    if file and allowed_file(file.filename):
+        if file.content_length > 2 * 1024 * 1024:  # 2MB
+            flash('Файл слишком большой (макс. 2MB)', 'error')
+            return redirect(url_for('profile_dp'))
+
+        # Генерируем уникальное имя
+        unique_filename = generate_name_for_avatar_photo(user_id=current_user.id, filename=file.filename)
+
+        # Сохраняем файл
+        upload_folder = os.path.join(
+            current_app.root_path,
+            'static',
+            'uploads',
+            'avatars'
+        )
+        os.makedirs(upload_folder, exist_ok=True)
+        file.save(os.path.join(upload_folder, unique_filename))
+
+        # Обновляем БД
+        db_sess = db_session.create_session()
+        try:
+            # Получаем пользователя из текущей сессии
+            user = db_sess.get(User, current_user.id)
+            if user:
+                user.ava_photo = f"uploads/avatars/{unique_filename}"  # Используем unique_filename!
+                db_sess.commit()
+                flash('Аватар успешно обновлён!', 'success')
+            else:
+                flash('Пользователь не найден', 'error')
+        except Exception as e:
+            db_sess.rollback()
+            flash(f'Ошибка: {str(e)}', 'error')
+        finally:
+            db_sess.close()
+        return redirect(url_for('profile_page'))
+
+    flash('Недопустимый формат файла', 'error')
+    return redirect(request.url)
+
+
+# Загрузчик пользователя (для Flask-Login)
 @login_manager.user_loader
 def load_user(user_id):
-    """
-    Загружает пользователя из базы данных по его ID.
-    Используется Flask-Login для управления сессиями пользователей.
-    Параметры:
-        user_id: ID пользователя для загрузки
-    Возвращает:
-        User: Объект пользователя или None, если пользователь не найден
-    """
+    # Здесь должна быть загрузка из БД
     db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+    user = db_sess.get(User, user_id)
+    db_sess.close()
+    return user  # Возвращает объект User или None
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()  # Удаляет данные пользователя из сессии
+    flash("Вы вышли из системы.", "info")
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -80,6 +147,10 @@ def login():
     form = LoginForm()
     equation, answer = generate_equation_for_captcha()
     captcha_error = None
+
+    # Если пользователь уже авторизован, перенаправляем его на главную страницу
+    if current_user.is_authenticated:
+        return redirect(url_for('/'))
 
     if form.validate_on_submit():
         # Проверяем капчу только если форма валидна
@@ -155,6 +226,7 @@ def registration_new_user():
 
 
 @app.route('/topics/<topic_slug>')
+@login_required
 def show_topic(topic_slug):
     """
         Эта функция обрабатывает отображение определенной страницы темы в WTForum.
@@ -180,6 +252,7 @@ def show_topic(topic_slug):
 
 
 @app.route('/add_topic', methods=['GET', 'POST'])
+@login_required
 def add_topic():
     """
         Эта функция обрабатывает добавление новой темы в WTForum. Она подготавливает данные для шаблона 'add_topic.html'
@@ -207,6 +280,7 @@ def add_topic():
 
 
 @socketio.on('new_message')
+@login_required
 def handle_new_message(data):
     print(data)
     topic_slug = data['topic_slug']
@@ -233,9 +307,25 @@ def on_join(data):
     print(f"Client joined room: {topic_slug}")
 
 
+###############################
+###############################
+
+@app.route('/profile_dp')
+@login_required
+def profile_dp():
+    return render_template('test2_ava.html',
+                         user=current_user,
+                         title="Профиль пользователя")
+
+
+###############################
+###############################
+
+
 def main():
     app.register_blueprint(users_api.blueprint)
     db_session.global_init("database/forum_db.sqlite")
+    app.url_map.add(Rule('/', endpoint='login', redirect_to='/login'))
     app.run(debug=True)
 
 
