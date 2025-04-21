@@ -118,20 +118,6 @@ body {
   background-color: grey;
 }
 
-.ava_change_input, .ava_change_button {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.ava_change_button {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  background-color: #0d6efd;
-  color: white;
-  border: 1px solid #ddd;
-}
-
-
 /* Полностью скрываем оригинальный input */
 .hidden-file-input {
     width: 0.1px;
