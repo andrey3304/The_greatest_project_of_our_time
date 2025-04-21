@@ -5,7 +5,11 @@
         <div>
             {{ form.csrf_token }}
         </div>
-        <div class="Login_error">{{ message }}</div>
+        <div class="Login_error">
+            {% if message_error %}
+                <p>{{ message_error }}</p>
+            {% endif %}
+        </div>
         <div>
             {% for field in form if field.name != 'csrf_token' %}
             <div class="Inputs">

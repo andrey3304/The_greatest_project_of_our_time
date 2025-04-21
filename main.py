@@ -41,7 +41,7 @@ def index():
     topics = db_sess.query(Topic).all()
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Профиль',
+        'username': f'{ current_user.name }',
         'topics_list': topics
     }
     return render_template('index.html', **data)
@@ -64,6 +64,9 @@ def profile_page():
 @app.route('/upload_avatar', methods=['POST'])
 @login_required  # Добавляем защиту роута
 def upload_avatar():
+    if any(['.png', '.jpg', '.jpeg', '.webp'] not in request.files):
+        flash('Файл не выбран', 'error')
+        return redirect(request.url)
     if 'avatar' not in request.files:
         flash('Файл не выбран', 'error')
         return redirect(request.url)
@@ -147,6 +150,7 @@ def login():
     form = LoginForm()
     equation, answer = generate_equation_for_captcha()
     captcha_error = None
+    message_error = None
 
     # Если пользователь уже авторизован, перенаправляем его на главную страницу
     if current_user.is_authenticated:
@@ -167,12 +171,12 @@ def login():
                 user = db_sess.query(User).filter(User.name == form.name.data).first()
 
                 if not (user and user.check_password(form.password.data)):
-                    raise ValueError
+                    message_error = "Incorrect username or password"
                 if user and user.check_password(form.password.data):
                     login_user(user, remember=form.remember_me.data)
                     return redirect("/")
                 else:
-                    message = "Incorrect username or password"
+                    message_error = "Incorrect username or password"
         except ValueError:
             equation, answer = generate_equation_for_captcha()
             captcha_error = "Please enter a valid number for the captcha"
@@ -182,7 +186,8 @@ def login():
                            form=form,
                            equation=equation,
                            answer=answer,
-                           captcha_error=captcha_error)
+                           captcha_error=captcha_error,
+                           message_error=message_error)
 
 
 @app.route('/register', methods=['GET', 'POST'])

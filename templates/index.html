@@ -3,14 +3,6 @@
 <div class="content">
         <div class="start-mes">
             <h2>ВЫБЕРИ ТЕМУ И ЗДЕСЬ ПОЯВЯТСЯ СООБЩЕНИЯ!</h2>
-            {% if current_user.is_authenticated %}
-                <div class="user-info">
-                    Вы вошли как: <strong>{{ current_user.name }}</strong><br />
-                    <a href="{{ url_for('logout') }}">Выйти</a>
-                </div>
-            {% else %}
-                <a href="{{ url_for('login') }}">Войти</a>
-            {% endif %}
         </div>
 </div>
 {% endblock %}
