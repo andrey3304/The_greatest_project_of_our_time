@@ -64,22 +64,21 @@ def profile_page():
 @app.route('/upload_avatar', methods=['POST'])
 @login_required  # Добавляем защиту роута
 def upload_avatar():
-    if any(['.png', '.jpg', '.jpeg', '.webp'] not in request.files):
-        flash('Файл не выбран', 'error')
-        return redirect(request.url)
     if 'avatar' not in request.files:
+        print('1')
         flash('Файл не выбран', 'error')
-        return redirect(request.url)
+        return redirect(url_for('profile_page'))
 
     file = request.files['avatar']
     if file.filename == '':
+        print('2')
         flash('Файл не выбран', 'error')
-        return redirect(request.url)
+        return redirect(url_for('profile_page'))
 
     if file and allowed_file(file.filename):
         if file.content_length > 2 * 1024 * 1024:  # 2MB
             flash('Файл слишком большой (макс. 2MB)', 'error')
-            return redirect(url_for('profile_dp'))
+            return redirect(url_for('profile_page'))
 
         # Генерируем уникальное имя
         unique_filename = generate_name_for_avatar_photo(user_id=current_user.id, filename=file.filename)
@@ -112,8 +111,9 @@ def upload_avatar():
             db_sess.close()
         return redirect(url_for('profile_page'))
 
+    print('3')
     flash('Недопустимый формат файла', 'error')
-    return redirect(request.url)
+    return redirect(url_for('profile_page'))
 
 
 # Загрузчик пользователя (для Flask-Login)
@@ -310,21 +310,6 @@ def on_join(data):
     topic_slug = data['topic_slug']
     join_room(topic_slug)
     print(f"Client joined room: {topic_slug}")
-
-
-###############################
-###############################
-
-@app.route('/profile_dp')
-@login_required
-def profile_dp():
-    return render_template('test2_ava.html',
-                         user=current_user,
-                         title="Профиль пользователя")
-
-
-###############################
-###############################
 
 
 def main():

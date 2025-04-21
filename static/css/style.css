@@ -33,6 +33,11 @@ body {
   background-color: blue;
 }
 
+.alert-error {
+    background-color: #dc3545;
+    color: white;
+}
+
 .register_all {
   color: white;
 }
