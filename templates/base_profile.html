@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <!-- Упрощенная навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/"><b><i>WTForum</i></b></a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right">Выход</i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Только контент без сообщений -->
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        document.getElementById('avatar-upload').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'Файл не выбран';
+        document.getElementById('file-name').textContent = fileName;});
+    </script>
+    <script>
+        document.getElementById('avatar-upload').addEventListener('change', function(e) {
+            const fileNameDisplay = document.getElementById('file-name');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                submitBtn.style.display = 'inline-block'; // Показываем кнопку
+            } else {
+                fileNameDisplay.textContent = 'Файл не выбран';
+                submitBtn.style.display = 'none'; // Скрываем кнопку
+        }});
+    </script>
+    <script>
+        // Автоматическое закрытие вывода ошибки связанной с расширением файла через 4 секунды.
+        document.addEventListener('DOMContentLoaded', () => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close(); // Bootstrap-метод для закрытия
+                }, 4000);
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
