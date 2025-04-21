@@ -1,3 +1,4 @@
 # created by virtualenv automatically
-venv
-static/uploads/avatars
+venv/
+static/uploads/avatars/
+.idea
