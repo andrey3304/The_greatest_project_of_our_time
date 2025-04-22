@@ -7,7 +7,7 @@ from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.config import DATABASE_ADRESS
 from data.external_apis import WeatherApiClient
 from data.forms import AddTopicForm
-from data.functions import make_slug
+from data.functions import make_slug, generate_equation_for_captcha
 from database import db_session
 
 app = Flask(__name__)
