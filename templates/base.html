@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ main_title }} {{ topic_slug }}</title>
-    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/css/index.css">
 </head>
 <body>
 
 <div class="header">
     <h1><a href="/" style="text-decoration: none; color: inherit;">WTForum</a></h1>
     <ul class="header-menu">
-        <li><a href="#">О форуме</a></li>
-        <li><a href="{{ url_account_or_login }}">{{ label_account_or_login }}</a></li>
+    <li><a href="{{ url_for('logout') }}">Выйти</a></li>
+    <li><a href="{{ url_for('profile_page') }}">{{ username }}</a></li>
     </ul>
 </div>
 
@@ -29,6 +29,28 @@
     {% block content %}
     {% endblock %}
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const accountButton = document.getElementById('account-button');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const accountButtonText = accountButton.textContent.trim();
 
+    accountButton.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        if (accountButtonText === 'Войти') {
+            window.location.href = '/login';
+        } else {
+            dropdownMenu.classList.toggle('show-dropdown');
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!accountButton.contains(event.target) && !dropdownMenu.contains(event.target) && accountButtonText !== 'Войти') {
+            dropdownMenu.classList.remove('show-dropdown');
+        }
+    });
+});
+</script>
 </body>
 </html>
