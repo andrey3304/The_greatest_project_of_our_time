@@ -18,7 +18,7 @@
       >- I. На форуме всего 5 страниц: Регистрация, Авторизация, Главная страница, Общие вопросы (тема) и профиль.
       >- II. На сайте будет реализована headers (https://getbootstrap.com/docs/5.3/examples/headers/),
       sidebars (https://getbootstrap.com/docs/5.3/examples/sidebars/) и может быть регистрация (https://getbootstrap.com/docs/5.3/examples/sign-in/)
-      >- III. Для пользовательской страницы мы использовали https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css.
+      >- III. Для сайта мы используем формы авторизации и регистрации.
       >- IV. Пользователь будет обязан ввести свою почту, никнейм и пароль.
       >- V. Зарегистрированный пользователь может поместить фотку себе на автарку.
       >- VI. Мы использовали http://api.weatherapi.com/v1/current.json.
