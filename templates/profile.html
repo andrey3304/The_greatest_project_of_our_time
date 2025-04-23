@@ -1,0 +1,81 @@
+{% extends "base_profile.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Боковая панель профиля -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <!-- Проверка на наличие аватара -->
+                    {% if user.ava_photo %}
+                        <img src="{{ url_for('static', filename=user.ava_photo) }}" class="rounded-circle mb-3" width="150" alt="Аватар">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/avatars/profile_anonym_photo.jpg') }}"
+                         class="rounded-circle mb-3" width="150" alt="Аватар">
+                    {% endif %}
+                    <h4>{{ current_user.name }}</h4>
+                    <p class="text-muted">
+                        <i class="bi bi-calendar"></i> 
+                        Зарегистрирован: {{ current_user.date.strftime('%d.%m.%Y') }}
+                    </p>
+                    <p class="text-muted">
+                        <i class='bi bi-envelope'></i>
+                        {{ current_user.email }}
+                    </p>
+                    <a><button class="break_pass_prof_page">Сбросить пароль</button></a>
+                    <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data">
+                        <div class="avatar-upload-container">
+                            <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="hidden-file-input">
+                            <label for="avatar-upload" class="styled-upload-btn">
+                                <span class="btn-text">Выбрать файл</span>
+                            </label>
+                            <span id="file-name" class="file-name-text">Файл не выбран</span>
+                        </div>
+                        <button type="submit" class="ava_change_button" id="submit-btn" style="display: none;">Загрузить аватар</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основная информация -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-person-lines-fill"></i> Основная информация</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="30%"><i class="bi bi-person"></i> Имя пользователя</th>
+                            <td>{{ current_user.name }}</td>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-envelope"></i> Email</th>
+                            <td>{{ current_user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th><i class="bi bi-clock-history"></i> Последний вход</th>
+                            <td>
+                                {% if current_user.last_login %}
+                                    {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}
+                                {% else %}
+                                    Неизвестно
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    {% for category, message in get_flashed_messages(with_categories=true) %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base_login.html" %}
+
+{% block content %}
+<h1 class="register_h1" >Registration</h1>
+<h2 class="Message_error"> {{ message }}</h2>
+<form action="" method="post" class="register_all">
+    {{ form.hidden_tag() }}
+    <div class="Inputs">
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(class="form-control") }}<br>
+            {% for error in form.name.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(class="form-control", type="password") }}<br>
+            {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password_again.label }}<br>
+            {{ form.password_again(class="form-control", type="password") }}<br>
+            {% for error in form.password_again.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(class="form-control", type="email") }}<br>
+            {% for error in form.email.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <div>
+                <a class="nav-link" href="/login">
+                    <i class="bi bi-box-arrow-right">Sign in</i>
+                </a>
+        </div>
+    </div>
+    <div class="login_captcha_body">
+            <h2>Solve the equation:</h2>
+            <div class="login_captcha">
+                {{ equation }} =
+                <input class="login_captcha_inp" type="hidden" name="expected_answer" value="{{ answer }}">
+                <input class="login_captcha_inp" type="number" name="user_answer" required>
+            </div>
+            {% if captcha_error %}
+            <p class="login_captcha_error">{{ captcha_error }}</p>
+            {% endif %}
+        </div>
+</form>
+{% endblock %}

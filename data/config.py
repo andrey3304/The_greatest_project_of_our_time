@@ -1,0 +1,2 @@
+WEATHER_API_KEY = 'd56f959f3b19480eb8a135752251604'
+DATABASE_ADRESS = 'database/forum_db.sqlite'
