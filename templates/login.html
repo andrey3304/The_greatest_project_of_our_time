@@ -5,8 +5,13 @@
         <div>
             {{ form.csrf_token }}
         </div>
-        <div class="Login_error">{{ message }}</div>
-        {% for field in form if field.name != 'csrf_token' %}
+        <div class="Login_error">
+            {% if message_error %}
+                <p>{{ message_error }}</p>
+            {% endif %}
+        </div>
+        <div>
+            {% for field in form if field.name != 'csrf_token' %}
             <div class="Inputs">
                 {{ field.label() }}
                 {{ field() }}
@@ -14,6 +19,23 @@
                     <div class="error" style="color: red;">{{ error }}</div>
                 {% endfor %}
             </div>
-        {% endfor %}
+            {% endfor %}
+            <div class="Inputs">
+                <a class="nav-link" href="/register">
+                    <i class="bi bi-box-arrow-right">Sign up</i>
+                </a>
+            </div>
+        </div>
+        <div class="login_captcha_body">
+            <h2>Solve the equation:</h2>
+            <div class="login_captcha">
+                {{ equation }} =
+                <input class="login_captcha_inp" type="hidden" name="expected_answer" value="{{ answer }}">
+                <input class="login_captcha_inp" type="number" name="user_answer" required>
+            </div>
+            {% if captcha_error %}
+            <p class="login_captcha_error">{{ captcha_error }}</p>
+            {% endif %}
+        </div>
     </form>
 {% endblock %}

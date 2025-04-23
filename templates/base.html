@@ -3,23 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ main_title }} {{ topic_slug }}</title>
-    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/css/index.css">
 </head>
 <body>
 
 <div class="header">
     <h1><a href="/" style="text-decoration: none; color: inherit;">WTForum</a></h1>
     <ul class="header-menu">
-        <li><a href="#">О форуме</a></li>
-        <li class="account-dropdown">
-            <a href="{{ url_account_or_login }}" id="account-button">{{ label_account_or_login }}</a>
-            {% if current_user.is_authenticated %}
-            <ul class="dropdown-menu">
-                <li><a href="/profile">Профиль</a></li>
-                <li><a href="/logout">Выйти</a></li>
-            </ul>
-            {% endif %}
-        </li>
+    <li><a href="{{ url_for('logout') }}">Выйти</a></li>
+    <li><a href="{{ url_for('profile_page') }}">{{ username }}</a></li>
     </ul>
 </div>
 

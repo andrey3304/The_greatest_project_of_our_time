@@ -276,12 +276,14 @@ body {
 }
 
 .messages-container {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    max-height: calc(100vh - 230px);
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-height: calc(100vh - 250px);
+        width: 100%; /* Занимает 100% ширины родительского элемента */
+        max-width: 100%;
 }
 
 .message-box {
