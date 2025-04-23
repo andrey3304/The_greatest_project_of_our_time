@@ -75,4 +75,3 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     def __repr__(self):
         return f"User(name='{self.name}', email='{self.email}')"
-
