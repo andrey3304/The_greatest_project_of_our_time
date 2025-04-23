@@ -159,7 +159,7 @@ body {
 
 .ava_change_button {
     padding: 8px 16px;
-    background: #34A853; /* Зеленый цвет для кнопки загрузки */
+    background: #34A853; /* Зеленый цвет для кнопки загрузки, когда она активна */
     color: white;
     border: none;
     border-radius: 4px;
