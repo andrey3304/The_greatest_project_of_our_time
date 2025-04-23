@@ -51,6 +51,16 @@ def register_user(username, password):
 
 
 def generate_equation_for_captcha():
+    """
+    Генерирует простое математическое уравнение для использования в CAPTCHA.
+    
+    Создает уравнение с двумя случайными числами и случайным оператором (+, -, *).
+    Числа выбираются в диапазоне от 1 до 18 для первого числа и от 1 до 10 для второго.
+    
+    Возвращает:
+        tuple: Кортеж содержащий строку с уравнением и правильный ответ на него.
+               Пример: ("5 + 3", 8)
+    """
     a = random.randint(10, 18)
     b = random.randint(1, 10)
     operation = random.choice(['+', '-', '*'])
@@ -69,7 +79,22 @@ def generate_equation_for_captcha():
 
 
 def generate_name_for_avatar_photo(user_id, filename):
-    # имя файла формируется из user_id, текущего времени и рандомные числа 1 - 10
+    """
+    Генерирует уникальное имя файла для аватарки пользователя.
+    
+    Имя формируется из:
+    - ID пользователя
+    - Текущей даты и времени в формате YYYYMMDDHHMMSS
+    - Случайного числа от 0 до 9
+    - Расширения исходного файла
+    
+    Параметры:
+        user_id (int): ID пользователя
+        filename (str): Исходное имя файла для извлечения расширения
+        
+    Возвращает:
+        str: Уникальное имя файла в формате {user_id}{timestamp}{random}.{ext}
+    """
     name_for_fut_file = (str(user_id) + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) +
                          str(random.randint(0, 9)))
     ext = filename.rsplit('.', 1)[1].lower()
@@ -77,5 +102,16 @@ def generate_name_for_avatar_photo(user_id, filename):
 
 
 def allowed_file(filename):
+    """
+    Проверяет, является ли расширение файла разрешенным для загрузки.
+    
+    Разрешенные расширения: png, jpg, jpeg, webp
+    
+    Параметры:
+        filename (str): Имя файла для проверки
+        
+    Возвращает:
+        bool: True если расширение разрешено, False в противном случае
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}
 
