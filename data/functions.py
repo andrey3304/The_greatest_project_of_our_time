@@ -114,6 +114,3 @@ def allowed_file(filename):
         bool: True если расширение разрешено, False в противном случае
     """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}
-
-
-print(make_slug('It'))
