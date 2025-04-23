@@ -1,8 +1,8 @@
 import random
 import re, datetime
 import unicodedata
-from data.classes import User
-from database.db_session import create_session
+'''from data.classes import User
+from database.db_session import create_session'''
 from slugify import slugify
 
 
@@ -10,10 +10,10 @@ def make_slug(text):
     """
     Создает слаг из текста, транслитерируя кириллицу в латиницу и удаляя недопустимые символы.
     """
-    text = str(text)  # Преобразуем в строку, если это необходимо
+    text = str(text).lower()  # Преобразуем в строку, если это необходимо
 
     # Транслитерация кириллицы в латиницу с помощью python-slugify
-    slug = slugify(text, lowercase=True) # to_lower=True преобразует все в нижний регистр
+    slug = slugify(text) # to_lower=True преобразует все в нижний регистр
 
     # Удаляем повторяющиеся дефисы (если они остались после slugify)
     slug = re.sub(r"-+", "-", slug)
@@ -115,3 +115,5 @@ def allowed_file(filename):
     """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}
 
+
+print(make_slug('It'))

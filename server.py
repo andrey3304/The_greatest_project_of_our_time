@@ -5,7 +5,7 @@ from werkzeug.routing import Rule
 from loguru import logger
 import os
 
-from data import users_api
+
 from data.classes import Topic, Message, LoginForm, RegisterForm, User
 from data.config import DATABASE_ADRESS
 from data.external_apis import WeatherApiClient
@@ -47,7 +47,7 @@ def index():
        render_template: Отображенный HTML-шаблон с предоставленными данными.
     """
     db_sess = db_session.create_session()
-    topics = db_sess.query(Topic).all()
+    topics = db_sess.query(Topic).filter(Topic.status == 'ok')
     data = {
         'main_title': 'WTForum. Главная страница',
         'username': f'{ current_user.name }',
@@ -304,7 +304,7 @@ def show_topic(topic_slug):
     is_auth = current_user.is_authenticated
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти' if not is_auth else current_user.name,
+        'username': 'Войти' if not is_auth else current_user.name,
         'url_account_or_login': '/login' if not is_auth else '#',
         'topics_list': topics,
         'messages': messages,
@@ -314,26 +314,28 @@ def show_topic(topic_slug):
 
 
 @app.route('/add_topic', methods=['GET', 'POST'])
-@login_required  # защита роута от намереннового избежания авторизации
 @logger.catch()
 def add_topic():
     db_sess = db_session.create_session()
     topics = db_sess.query(Topic).filter(Topic.status == 'ok')
     db_sess.close()
+    is_auth = current_user.is_authenticated
     data = {
         'main_title': 'WTForum. Главная страница',
-        'label_account_or_login': 'Войти',
+        'username': 'Войти' if not is_auth else current_user.name,
         'topics_list': topics,
     }
 
     form = AddTopicForm()
 
     if request.method == 'POST' and form.validate_on_submit():
+        db_sess = db_session.create_session()
         topic = Topic()
         topic.title = form.name.data
         topic.description = form.about.data
         topic.slug = make_slug(form.name.data)
         topic.status = 'wait'
+        print(topic.title, topic.description, topic.slug, topic.slug)
 
         db_sess.add(topic)
         db_sess.commit()
@@ -423,7 +425,6 @@ def topic_admin(action):
 
 @logger.catch()
 def main():
-    app.register_blueprint(users_api.blueprint)
     db_session.global_init(DATABASE_ADRESS)
     app.url_map.add(Rule('/', endpoint='login', redirect_to='/login'))  # автоматически перенаправляет на /login
     app.run(debug=True)
