@@ -23,7 +23,6 @@
                         <i class='bi bi-envelope'></i>
                         {{ current_user.email }}
                     </p>
-                    <a><button class="break_pass_prof_page">Сбросить пароль</button></a>
                     <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data">
                         <div class="avatar-upload-container">
                             <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="hidden-file-input">
