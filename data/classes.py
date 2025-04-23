@@ -63,8 +63,15 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     status = sqlalchemy.Column(sqlalchemy.String, default='user')
 
+    def get_id(self):  # Flask-Login требует метод get_id()
+        return str(self.id)  # Преобразуем в строку (стандарт для сессий)
+
     def changing_password_to_hash_password(self, password):
         self.hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
     def check_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest() == self.hashed_password
+
+    def __repr__(self):
+        return f"User(name='{self.name}', email='{self.email}')"
+
