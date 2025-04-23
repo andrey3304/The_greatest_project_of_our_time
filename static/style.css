@@ -33,6 +33,11 @@ body {
   background-color: blue;
 }
 
+.alert-error {
+    background-color: #dc3545;
+    color: white;
+}
+
 .register_all {
   color: white;
 }
@@ -99,4 +104,72 @@ body {
 .login_captcha_error {
     color: red;
     margin-top: 10px;
+}
+
+.break_pass_prof_page {
+  background-color: #4285F4;
+  border: 1px solid #ddd;
+  color: white;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+/* Полностью скрываем оригинальный input */
+.hidden-file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+/* Стили для нашей кнопки */
+.styled-upload-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #4285F4;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    transition: background 0.2s;
+    margin-right: 10px;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.styled-upload-btn:hover, .break_pass_prof_page:hover {
+    background: #3367D6;
+}
+
+/* Стиль для текста с именем файла */
+.file-name-text {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Отступ для текста внутри кнопки */
+.btn-text {
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.ava_change_button {
+    padding: 8px 16px;
+    background: #34A853; /* Зеленый цвет для кнопки загрузки */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+.ava_change_button:hover {
+    background: #2D8E47;
 }
