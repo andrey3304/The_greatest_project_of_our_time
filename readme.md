@@ -20,11 +20,15 @@
 ```bash
 git clone https://github.com/andrey3304/The_greatest_project_of_our_time
 ```
-2. Установить зависимости
+2. Создать виртуальное окружение(если еще нет)
+```bash
+python3 -m venv venv
+```
+3. Установить зависимости
 ```bash
 pip install -r requirements.txt
 ```
-3. Запуск
+4. Запуск
 ```bash
 python app.py
 ```
