@@ -1,8 +1,8 @@
 import random
 import re, datetime
 import unicodedata
-'''from data.classes import User
-from database.db_session import create_session'''
+from data.classes import User
+from database.db_session import create_session
 from slugify import slugify
 
 
