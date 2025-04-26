@@ -15,17 +15,17 @@
 
 Установка:
 
-```bash
+
 1. Клонировать репозиторий
-git clone https://github.com/andrey3304/The_greatest_project_of_our_time.git
-
+```bash
+git clone https://github.com/andrey3304/The_greatest_project_of_our_time
+```
 2. Установить зависимости
+```bash
 pip install -r requirements.txt
-
-3. Настройка окружения
-cp .env.example .env
-
-4. Запуск
+```
+3. Запуск
+```bash
 python app.py
 ```
 
