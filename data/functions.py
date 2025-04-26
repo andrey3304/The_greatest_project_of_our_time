@@ -1,8 +1,6 @@
 import random
 import re, datetime
 import unicodedata
-from data.classes import User
-from database.db_session import create_session
 from slugify import slugify
 
 
@@ -22,32 +20,6 @@ def make_slug(text):
     slug = slug.strip("-")
 
     return slug
-
-
-
-def register_user(username, password):
-    """
-        Регистрирует нового пользователя в базе данных.
-
-        Эта функция проверяет, существует ли пользователь с указанным именем пользователя в базе данных.
-        Если пользователь не существует, создается новый объект User с указанным именем пользователя и паролем,
-        а затем добавляется в сеанс базы данных. Сеанс затем фиксируется для сохранения изменений.
-
-        Параметры:
-        username (str): Имя пользователя нового пользователя. Должно быть уникальным в базе данных.
-        password (str): Пароль нового пользователя.
-
-        Возвращает:
-        None
-    """
-    session = create_session()
-    existing_user = session.query(User).filter_by(username=username).first()
-    if existing_user:
-        pass
-    else:
-        new_user = User(username=username, password=password)
-        session.add(new_user)
-        session.commit()
 
 
 def generate_equation_for_captcha():
